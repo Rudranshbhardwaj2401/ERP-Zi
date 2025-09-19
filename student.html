@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
-        rel="stylesheet">
+        stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /*
@@ -892,8 +892,9 @@
         -->
         <aside class="sidebar">
             <div>
-                <div class="logo-top">
-                    <img src="/ERP-Zi Logo.png">
+                <div class="sidebar-header">
+                    <h2 style="color: var(--primary-color); font-family: 'Playfair Display', serif; font-size: 1.5rem;">
+                        ERP-Zi</h2>
                 </div>
                 <div class="user-profile-preview">
                     <img src="https://i.pinimg.com/564x/02/57/5a/02575a7f282496587321016584281308.jpg"
@@ -1567,7 +1568,7 @@
                                         <td>28 Oct 2025</td>
                                         <td><span class="status status-submitted">Submitted</span></td>
                                         <td>--/25</td>
-                                        <td><button class="btn btn-secondary">View</button></td>
+                                        <td><button class="btn btn-secondary" onclick="viewAssignment('CS202 Lab 2')">View</button></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -2908,10 +2909,35 @@
             });
 
             // Upload form submission
-            document.getElementById('uploadForm').addEventListener('submit', (e) => {
+            document.getElementById('uploadForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                alert(`Assignment "${currentUploadAssignment}" uploaded successfully!`);
-                uploadModal.style.display = 'none';
+                const fileInput = document.getElementById('assignmentFile');
+                const file = fileInput.files[0];
+                
+                if (!file) {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+                
+                try {
+                    // Upload to Firebase Storage
+                    const { uploadBytes, getDownloadURL, ref } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+                    const { getStorage } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+                    
+                    const storage = getStorage();
+                    const fileName = `${currentUploadAssignment}_${Date.now()}_${file.name}`;
+                    const storageRef = ref(storage, `assignments/${fileName}`);
+                    
+                    await uploadBytes(storageRef, file);
+                    const downloadURL = await getDownloadURL(storageRef);
+                    
+                    console.log('File uploaded successfully:', downloadURL);
+                    alert(`Assignment "${currentUploadAssignment}" uploaded successfully!\nDownload URL: ${downloadURL}`);
+                    uploadModal.style.display = 'none';
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    alert('Upload failed. Please try again.');
+                }
             });
         }
 
@@ -3221,6 +3247,13 @@
             alert('Transport pass renewal initiated.\nAmount: ₹450.00\nNew validity: Nov 1 - Nov 30, 2025');
         }
 
+        function viewAssignment(assignmentName) {
+            // For demo purposes, show a placeholder
+            // In real implementation, you'd fetch the actual file URL from Firebase
+            const demoUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+            window.open(demoUrl, '_blank');
+        }
+
         // ==========================================
         // LIVE UPDATES
         // ==========================================
@@ -3238,6 +3271,7 @@
             alert('Notifications:\n\n• CS203 Project deadline approaching\n• Hostel fee payment due\n• Library book return reminder\n• New exam schedule published\n• Transport pass renewal available');
         });
     </script>
+    <script type="module" src="./student.js"></script>
 </body>
 
 </html>

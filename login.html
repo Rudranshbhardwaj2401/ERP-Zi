@@ -8,287 +8,287 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&display=swap"
         rel="stylesheet">
-    <style>
-        /* --- Base & Reset Styles --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            font-size: 16px;
-        }
-
-        body {
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        /* --- Main Container --- */
-        .split-container {
-            display: flex;
-            width: 90%;
-            max-width: 1100px;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            box-shadow: 0 0.5rem 2rem 0 rgba(31, 38, 135, 0.17);
-            background: white;
-        }
-
-        /* --- Left Panel (Image & Quote) --- */
-        .left-panel {
-            flex: 1;
-            background: url('https://i.pinimg.com/736x/b6/6a/e7/b66ae706a4d03c6852d6a3eaa84cfefd.jpg') no-repeat center center;
-            background-size: cover;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 3rem;
-            min-height: 500px;
-        }
-
-        .left-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, .35);
-            pointer-events: none;
-        }
-
-        .quote-top {
-            color: #fff;
-            letter-spacing: 0.1rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            position: absolute;
-            top: 3rem;
-            left: 3rem;
-            z-index: 2;
-            opacity: .88;
-        }
-
-        .left-content {
-            z-index: 2;
-            position: relative;
-            color: #fff;
-        }
-
-        .left-content h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.8rem, 2.8vw, 3.5rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .left-content p {
-            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
-            opacity: .88;
-            line-height: 1.5;
-        }
-
-        /* --- Right Panel (Form) --- */
-        .right-panel {
-            flex: 1;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: clamp(1.5rem, 5vw, 3rem);
-        }
-
-        .logo-top {
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        /* CORRECTED LOGO STYLING */
-        .logo-top img {
-            width: 50%;
-            max-width: 120px;
-            height: auto;
-            /* Let the aspect ratio be maintained */
-            filter: drop-shadow(0 0 10px #ffffffa1) drop-shadow(0 0 25px #ffffff96);
-        }
-
-        .form-container {
-            width: 100%;
-            max-width: 330px;
-        }
-
-        /* CORRECTED FORM TITLE */
-        .form-title {
-            text-align: center;
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.5rem, 4vw, 1.8rem);
-            /* Fluid font size */
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #222;
-        }
-
-        /* CORRECTED FORM SUBTITLE */
-        .form-subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 1rem;
-            margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
-            /* Fluid margin */
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #222;
-            letter-spacing: 0.02em;
-        }
-
-        .form-group input {
-            width: 100%;
-            border: 1px solid #ececec;
-            border-radius: 8px;
-            background: #f8f8f8;
-            font-size: 1rem;
-            padding: 0.8rem 1rem;
-            color: #222;
-            transition: border-color 0.2s;
-            font-family: inherit;
-        }
-
-        .form-group input:focus {
-            border-color: #1e3a8a;
-            outline: none;
-        }
-
-        .form-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            gap: 1rem;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            font-size: 0.95rem;
-            color: #222;
-            cursor: pointer;
-        }
-
-        .remember-me input[type="checkbox"] {
-            margin-right: 7px;
-            accent-color: #1e3a8a;
-        }
-
-        .forgot-link {
-            font-size: 0.95rem;
-            color: #666;
-            text-decoration: none;
-            transition: color .17s;
-        }
-
-        .forgot-link:hover {
-            color: #111;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 0.9rem 0;
-            background: #111;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 9px;
-            cursor: pointer;
-            margin-bottom: 1rem;
-            transition: background .18s;
-        }
-
-        .btn-login:hover {
-            background: #1e3a8a;
-        }
-
-        .signup-bottom {
-            text-align: center;
-            font-size: 0.95rem;
-            color: #666;
-        }
-
-        .signup-bottom a {
-            color: #222;
-            text-decoration: none;
-            font-weight: 600;
-            margin-left: 5px;
-            transition: color .18s;
-        }
-
-        .signup-bottom a:hover {
-            color: #1e3a8a;
-        }
-
-        /* --- Responsive Styles (Media Queries) --- */
-        @media(max-width: 768px) {
-            body {
-                align-items: flex-start;
+        <style>
+            /* --- Base & Reset Styles --- */
+            * {
+                box-sizing: border-box;
+                margin: 0;
                 padding: 0;
             }
-
-            .split-container {
-                flex-direction: column;
-                width: 100%;
-                max-width: 100%;
-                border-radius: 0;
+    
+            html {
+                font-size: 16px;
             }
-
-            .left-panel {
-                min-height: 250px;
-                padding: 2rem;
+    
+            body {
+                min-height: 100vh;
+                font-family: 'Inter', sans-serif;
+                background: #000;
+                display: flex;
+                align-items: center;
                 justify-content: center;
+                padding: 1rem;
+            }
+    
+            /* --- Main Container --- */
+            .split-container {
+                display: flex;
+                width: 90%;
+                max-width: 1100px;
+                border-radius: 1.5rem;
+                overflow: hidden;
+                box-shadow: 0 0.5rem 2rem 0 rgba(31, 38, 135, 0.17);
+                background: white;
+            }
+    
+            /* --- Left Panel (Image & Quote) --- */
+            .left-panel {
+                flex: 1;
+                background: url('https://i.pinimg.com/736x/b6/6a/e7/b66ae706a4d03c6852d6a3eaa84cfefd.jpg') no-repeat center center;
+                background-size: cover;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding: 3rem;
+                min-height: 500px;
+            }
+    
+            .left-overlay {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, .35);
+                pointer-events: none;
+            }
+    
+            .quote-top {
+                color: #fff;
+                letter-spacing: 0.1rem;
+                font-size: 0.9rem;
+                font-weight: 500;
+                position: absolute;
+                top: 3rem;
+                left: 3rem;
+                z-index: 2;
+                opacity: .88;
+            }
+    
+            .left-content {
+                z-index: 2;
+                position: relative;
+                color: #fff;
+            }
+    
+            .left-content h1 {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(1.8rem, 2.8vw, 3.5rem);
+                font-weight: 700;
+                margin-bottom: 1rem;
+                line-height: 1.2;
+            }
+    
+            .left-content p {
+                font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+                opacity: .88;
+                line-height: 1.5;
+            }
+    
+            /* --- Right Panel (Form) --- */
+            .right-panel {
+                flex: 1;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: clamp(1.5rem, 5vw, 3rem);
+            }
+    
+            .logo-top {
+                margin-bottom: 1.5rem;
                 text-align: center;
             }
-
-            .right-panel {
-                padding: 2.5rem 1.5rem;
+    
+            /* CORRECTED LOGO STYLING */
+            .logo-top img {
+                width: 50%;
+                max-width: 120px;
+                height: auto;
+                /* Let the aspect ratio be maintained */
+                filter: drop-shadow(0 0 10px #ffffffa1) drop-shadow(0 0 25px #ffffff96);
             }
-
-            .quote-top {
-                display: none;
+    
+            .form-container {
+                width: 100%;
+                max-width: 330px;
             }
-
-            .left-content h1 {
-                font-size: 1.6rem;
-            }
-
-            .left-content p {
-                font-size: 0.95rem;
-            }
-        }
-
-        @media(max-width: 480px) {
-            .right-panel {
-                padding: 2rem 1rem;
-            }
-
+    
+            /* CORRECTED FORM TITLE */
             .form-title {
-                font-size: 1.6rem;
+                text-align: center;
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(1.5rem, 4vw, 1.8rem);
+                /* Fluid font size */
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+                color: #222;
             }
-        }
-    </style>
+    
+            /* CORRECTED FORM SUBTITLE */
+            .form-subtitle {
+                text-align: center;
+                color: #666;
+                font-size: 1rem;
+                margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
+                /* Fluid margin */
+            }
+    
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+    
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-size: 0.95rem;
+                font-weight: 500;
+                color: #222;
+                letter-spacing: 0.02em;
+            }
+    
+            .form-group input {
+                width: 100%;
+                border: 1px solid #ececec;
+                border-radius: 8px;
+                background: #f8f8f8;
+                font-size: 1rem;
+                padding: 0.8rem 1rem;
+                color: #222;
+                transition: border-color 0.2s;
+                font-family: inherit;
+            }
+    
+            .form-group input:focus {
+                border-color: #1e3a8a;
+                outline: none;
+            }
+    
+            .form-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1.5rem;
+                gap: 1rem;
+            }
+    
+            .remember-me {
+                display: flex;
+                align-items: center;
+                font-size: 0.95rem;
+                color: #222;
+                cursor: pointer;
+            }
+    
+            .remember-me input[type="checkbox"] {
+                margin-right: 7px;
+                accent-color: #1e3a8a;
+            }
+    
+            .forgot-link {
+                font-size: 0.95rem;
+                color: #666;
+                text-decoration: none;
+                transition: color .17s;
+            }
+    
+            .forgot-link:hover {
+                color: #111;
+            }
+    
+            .btn-login {
+                width: 100%;
+                padding: 0.9rem 0;
+                background: #111;
+                color: #fff;
+                font-size: 1rem;
+                font-weight: 600;
+                border: none;
+                border-radius: 9px;
+                cursor: pointer;
+                margin-bottom: 1rem;
+                transition: background .18s;
+            }
+    
+            .btn-login:hover {
+                background: #1e3a8a;
+            }
+    
+            .signup-bottom {
+                text-align: center;
+                font-size: 0.95rem;
+                color: #666;
+            }
+    
+            .signup-bottom a {
+                color: #222;
+                text-decoration: none;
+                font-weight: 600;
+                margin-left: 5px;
+                transition: color .18s;
+            }
+    
+            .signup-bottom a:hover {
+                color: #1e3a8a;
+            }
+    
+            /* --- Responsive Styles (Media Queries) --- */
+            @media(max-width: 768px) {
+                body {
+                    align-items: flex-start;
+                    padding: 0;
+                }
+    
+                .split-container {
+                    flex-direction: column;
+                    width: 100%;
+                    max-width: 100%;
+                    border-radius: 0;
+                }
+    
+                .left-panel {
+                    min-height: 250px;
+                    padding: 2rem;
+                    justify-content: center;
+                    text-align: center;
+                }
+    
+                .right-panel {
+                    padding: 2.5rem 1.5rem;
+                }
+    
+                .quote-top {
+                    display: none;
+                }
+    
+                .left-content h1 {
+                    font-size: 1.6rem;
+                }
+    
+                .left-content p {
+                    font-size: 0.95rem;
+                }
+            }
+    
+            @media(max-width: 480px) {
+                .right-panel {
+                    padding: 2rem 1rem;
+                }
+    
+                .form-title {
+                    font-size: 1.6rem;
+                }
+            }
+        </style>
 </head>
 
 <body>
@@ -303,9 +303,9 @@
         </div>
         <div class="right-panel">
             <div class="logo-top">
-                <img src="./ERP-Zi Logo.png" alt="Company Logo">
+                <img src="./ERP-Photoroom.png" alt="Company Logo">
             </div>
-            <form action="#" method="POST" class="form-container">
+            <form class="form-container">
                 <div class="form-title">Welcome Back</div>
                 <div class="form-subtitle">Enter your email and password to access your ERP Account</div>
                 <div class="form-group">
@@ -324,10 +324,11 @@
                 <button type="submit" class="btn-login">Sign In</button>
             </form>
             <div class="signup-bottom">
-                Don't have an account?<a href="#">Sign Up</a>
+                Don't have an account?<a href="./signup.html">Sign Up</a>
             </div>
         </div>
     </div>
-</body>
+    <script type="module" src="./login.js"></script>
+    </body>
 
 </html>
