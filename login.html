@@ -25,7 +25,6 @@
             font-family: 'Inter', sans-serif;
             background: #000;
             display: flex;
-            /* Default to centering for larger screens where content fits */
             align-items: center;
             justify-content: center;
             padding: 1rem;
@@ -36,7 +35,6 @@
             display: flex;
             width: 90%;
             max-width: 1100px;
-            /* Height is determined by content, not fixed */
             border-radius: 1.5rem;
             overflow: hidden;
             box-shadow: 0 0.5rem 2rem 0 rgba(31, 38, 135, 0.17);
@@ -54,7 +52,6 @@
             justify-content: flex-end;
             padding: 3rem;
             min-height: 500px;
-            /* Provides a better look on desktop */
         }
 
         .left-overlay {
@@ -104,7 +101,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* Use clamp for responsive padding that shrinks on smaller screens */
             padding: clamp(1.5rem, 5vw, 3rem);
         }
 
@@ -113,8 +109,12 @@
             text-align: center;
         }
 
+        /* CORRECTED LOGO STYLING */
         .logo-top img {
-            height: 100px;
+            width: 50%;
+            max-width: 120px;
+            height: auto;
+            /* Let the aspect ratio be maintained */
             filter: drop-shadow(0 0 10px #ffffffa1) drop-shadow(0 0 25px #ffffff96);
         }
 
@@ -123,20 +123,24 @@
             max-width: 330px;
         }
 
+        /* CORRECTED FORM TITLE */
         .form-title {
             text-align: center;
             font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            /* Fluid font size */
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: #222;
         }
 
+        /* CORRECTED FORM SUBTITLE */
         .form-subtitle {
             text-align: center;
             color: #666;
             font-size: 1rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
+            /* Fluid margin */
         }
 
         .form-group {
@@ -201,42 +205,22 @@
             color: #111;
         }
 
-        .btn-login,
-        .btn-google {
+        .btn-login {
             width: 100%;
             padding: 0.9rem 0;
-            font-size: 1rem;
-            border-radius: 9px;
-            cursor: pointer;
-            transition: background .18s;
-        }
-
-        .btn-login {
             background: #111;
             color: #fff;
+            font-size: 1rem;
             font-weight: 600;
             border: none;
+            border-radius: 9px;
+            cursor: pointer;
             margin-bottom: 1rem;
+            transition: background .18s;
         }
 
         .btn-login:hover {
             background: #1e3a8a;
-        }
-
-        .btn-google {
-            background: #fff;
-            color: #222;
-            font-weight: 500;
-            border: 1px solid #ececec;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-google:hover {
-            background: #f2f2f2;
         }
 
         .signup-bottom {
@@ -258,47 +242,36 @@
         }
 
         /* --- Responsive Styles (Media Queries) --- */
-
-        /* For tablets and smaller devices */
         @media(max-width: 768px) {
             body {
-                /* On smaller screens, align to the top to allow scrolling */
                 align-items: flex-start;
                 padding: 0;
-                /* Use full screen for the container */
             }
 
             .split-container {
-                /* Stack panels vertically */
                 flex-direction: column;
                 width: 100%;
                 max-width: 100%;
-                /* Allow it to take full width */
                 border-radius: 0;
             }
 
             .left-panel {
-                /* Adjust height and padding for mobile view */
                 min-height: 250px;
                 padding: 2rem;
                 justify-content: center;
-                /* Center the quote vertically and horizontally */
                 text-align: center;
             }
 
             .right-panel {
                 padding: 2.5rem 1.5rem;
-                /* More vertical, less horizontal padding */
             }
 
             .quote-top {
-                /* Hide the corner quote on mobile for a cleaner look */
                 display: none;
             }
 
             .left-content h1 {
                 font-size: 1.6rem;
-                /* Adjust font for readability */
             }
 
             .left-content p {
@@ -306,7 +279,6 @@
             }
         }
 
-        /* For very small mobile screens */
         @media(max-width: 480px) {
             .right-panel {
                 padding: 2rem 1rem;
@@ -331,8 +303,7 @@
         </div>
         <div class="right-panel">
             <div class="logo-top">
-                <!-- NOTE: Update this src path to your actual image location -->
-                <img src="./ERP-Photoroom.png" alt="Company Logo">
+                <img src="./ERP-Zi Logo.png" alt="Company Logo">
             </div>
             <form action="#" method="POST" class="form-container">
                 <div class="form-title">Welcome Back</div>
