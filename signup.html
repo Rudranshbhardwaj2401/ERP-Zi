@@ -28,7 +28,17 @@
             justify-content: center;
             padding: 1rem;
         }
+        .logo-top {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
 
+        /* LOGO SHADOW and sizing */
+        .logo-top img {
+            height: 100px;
+            /* filter: drop-shadow() is the best way to add a shadow to a transparent PNG */
+            filter: drop-shadow(0 0 10px #ffffff8a) drop-shadow(0 0 30px #ffffff);
+        }
         .split-container {
             display: flex;
             width: 90%;

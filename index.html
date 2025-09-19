@@ -104,19 +104,17 @@
                 padding: clamp(1.5rem, 5vw, 3rem);
             }
     
-            .logo-top {
-                margin-bottom: 1.5rem;
-                text-align: center;
-            }
-    
-            /* CORRECTED LOGO STYLING */
-            .logo-top img {
-                width: 50%;
-                max-width: 120px;
-                height: auto;
-                /* Let the aspect ratio be maintained */
-                filter: drop-shadow(0 0 10px #ffffffa1) drop-shadow(0 0 25px #ffffff96);
-            }
+        .logo-top {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* LOGO SHADOW and sizing */
+        .logo-top img {
+            height: 100px;
+            /* filter: drop-shadow() is the best way to add a shadow to a transparent PNG */
+            filter: drop-shadow(0 0 10px #ffffff8a) drop-shadow(0 0 30px #ffffff);
+        }
     
             .form-container {
                 width: 100%;
