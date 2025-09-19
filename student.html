@@ -1,0 +1,3231 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ERP-Zi | Student Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /*
+        ==========================================================================
+        *   ROOT & THEME VARIABLES
+        ==========================================================================
+        */
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-color-light: #3b82f6;
+            --secondary-color: #111827;
+            --sidebar-text: #e5e7eb;
+
+            --success-color: #16a34a;
+            --warning-color: #ca8a04;
+            --danger-color: #dc2626;
+
+            --bg-color: #f9fafb;
+            --card-bg-color: #ffffff;
+            --text-color: #1f2937;
+            --muted-text-color: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-color: rgba(99, 102, 241, 0.08);
+
+            --chart-grid-color: rgba(0, 0, 0, 0.05);
+            --chart-tick-color: #6b7280;
+        }
+
+        html[data-theme='dark'] {
+            --primary-color: #3b82f6;
+            --primary-color-light: #60a5fa;
+            --secondary-color: #1f2937;
+            --sidebar-text: #d1d5db;
+
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+
+            --bg-color: #111827;
+            --card-bg-color: #1f2937;
+            --text-color: #f9fafb;
+            --muted-text-color: #9ca3af;
+            --border-color: #374151;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+
+            --chart-grid-color: rgba(255, 255, 255, 0.1);
+            --chart-tick-color: #9ca3af;
+        }
+
+        /*
+        ==========================================================================
+        *   GENERAL & BASE STYLES
+        ==========================================================================
+        */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /*
+        ==========================================================================
+        *   SIDEBAR
+        ==========================================================================
+        */
+        .sidebar {
+            width: 280px;
+            background: var(--secondary-color);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-right: 1px solid var(--border-color);
+            transition: width 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-header img {
+            height: 70px;
+        }
+
+        .user-profile-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1rem 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-profile-preview img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            object-fit: cover;
+        }
+
+        .user-profile-preview h3 {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .user-profile-preview p {
+            font-size: 0.9rem;
+            color: var(--muted-text-color);
+        }
+
+        .sidebar-nav {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            color: var(--sidebar-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .sidebar-nav a.active {
+            background: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3);
+        }
+
+        .sidebar-nav .icon {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        /*
+        ==========================================================================
+        *   MAIN CONTENT & HEADER
+        ==========================================================================
+        */
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .main-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            background: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            color: var(--text-color);
+            width: 250px;
+        }
+
+        .search-bar .icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--muted-text-color);
+        }
+
+        .icon-btn {
+            background: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            position: relative;
+        }
+
+        .icon-btn .icon {
+            width: 24px;
+            height: 24px;
+            color: var(--text-color);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .theme-switcher .dark-icon {
+            display: none;
+        }
+
+        html[data-theme='dark'] .theme-switcher .dark-icon {
+            display: block;
+        }
+
+        html[data-theme='dark'] .theme-switcher .light-icon {
+            display: none;
+        }
+
+        /*
+        ==========================================================================
+        *   UI COMPONENTS (Cards, Buttons, Tables, etc.)
+        ==========================================================================
+        */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-container-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-container-3col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-container-4col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg-color);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-color);
+        }
+
+        .stat-card .icon-container {
+            padding: 1rem;
+            border-radius: 50%;
+        }
+
+        .stat-card .icon-container .icon {
+            color: #fff;
+            width: 32px;
+            height: 32px;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            word-break: break-all;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+            color: var(--muted-text-color);
+            word-wrap: break-word;
+        }
+
+        .card {
+            background: var(--card-bg-color);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 25px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card h2 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg-color);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: #fff;
+            border-color: var(--success-color);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: #fff;
+            border-color: var(--warning-color);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: #fff;
+            border-color: var(--danger-color);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            color: var(--muted-text-color);
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transform: translateY(2px);
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .chart-container {
+            height: 320px;
+            width: 100%;
+        }
+
+        .chart-container-small {
+            height: 200px;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            table-layout: fixed;
+            /* Prevents tables from overflowing their container */
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            word-wrap: break-word;
+            /* Ensures long text wraps */
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--muted-text-color);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: var(--bg-color);
+        }
+
+        td .small-text {
+            font-size: 0.9rem;
+            color: var(--muted-text-color);
+        }
+
+        .status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .status-verified,
+        .status-graded,
+        .status-paid,
+        .status-approved {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-submitted {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status-pending,
+        .status-due,
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        html[data-theme='dark'] .status-verified,
+        html[data-theme='dark'] .status-graded,
+        html[data-theme='dark'] .status-paid,
+        html[data-theme='dark'] .status-approved {
+            background-color: #166534;
+            color: #dcfce7;
+        }
+
+        html[data-theme='dark'] .status-submitted {
+            background-color: #713f12;
+            color: #fef9c3;
+        }
+
+        html[data-theme='dark'] .status-pending,
+        html[data-theme='dark'] .status-due,
+        html[data-theme='dark'] .status-rejected {
+            background-color: #991b1b;
+            color: #fee2e2;
+        }
+
+        .detail-list p {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 1rem;
+            font-size: 0.95rem;
+            gap: 1rem;
+        }
+
+        .detail-list p span {
+            text-align: right;
+        }
+
+
+        .detail-list p:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-list strong {
+            color: var(--muted-text-color);
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .inline-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+            stroke-width: 2;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .rating-stars svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--warning-color);
+            stroke: var(--warning-color);
+        }
+
+        /*
+        ==========================================================================
+        *   MODAL STYLES
+        ==========================================================================
+        */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card-bg-color);
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--muted-text-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background: var(--bg-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--card-bg-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-success {
+            background: rgba(22, 163, 74, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(22, 163, 74, 0.2);
+        }
+
+        .alert-warning {
+            background: rgba(202, 138, 4, 0.1);
+            color: var(--warning-color);
+            border: 1px solid rgba(202, 138, 4, 0.2);
+        }
+
+        .alert-danger {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                padding: 1.5rem 2rem;
+            }
+
+            .grid-container-2col {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-container-3col {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+                padding: 1rem 0.5rem;
+            }
+
+            .sidebar .text {
+                display: none;
+            }
+
+            .user-profile-preview {
+                padding: 0.5rem 0;
+            }
+
+            .user-profile-preview h3,
+            .user-profile-preview p {
+                display: none;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .main-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .search-bar input {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+    ==========================================================================
+    *   MODAL MARKUP
+    ==========================================================================
+    -->
+    <div class="modal-overlay" id="leaveModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Hostel Leave Application</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="leaveForm">
+                    <div class="form-group">
+                        <label for="leaveFrom">From Date</label>
+                        <input type="date" id="leaveFrom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="leaveTo">To Date</label>
+                        <input type="date" id="leaveTo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="leaveReason">Reason</label>
+                        <select id="leaveReason" required>
+                            <option value="">Select Reason</option>
+                            <option value="family">Family Function</option>
+                            <option value="medical">Medical Emergency</option>
+                            <option value="personal">Personal Work</option>
+                            <option value="home">Going Home</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="leaveDetails">Details</label>
+                        <textarea id="leaveDetails" placeholder="Provide additional details..."></textarea>
+                    </div>
+                    <div style="text-align: right; gap: 1rem; display: flex; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Assignment</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="assignmentFile">Select File</label>
+                        <input type="file" id="assignmentFile" accept=".pdf,.doc,.docx,.zip" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="uploadComments">Comments (Optional)</label>
+                        <textarea id="uploadComments" placeholder="Any additional comments..."></textarea>
+                    </div>
+                    <div style="text-align: right; gap: 1rem; display: flex; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Upload File</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+    ==========================================================================
+    *   MAIN DASHBOARD CONTAINER
+    ==========================================================================
+    -->
+    <div class="dashboard-container">
+        <!-- 
+        ==========================================================================
+        *   SIDEBAR
+        ==========================================================================
+        -->
+        <aside class="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <h2 style="color: var(--primary-color); font-family: 'Playfair Display', serif; font-size: 1.5rem;">
+                        ERP-Zi</h2>
+                </div>
+                <div class="user-profile-preview">
+                    <img src="https://i.pinimg.com/564x/02/57/5a/02575a7f282496587321016584281308.jpg"
+                        alt="Student Photo">
+                    <h3>Johnathan Doe</h3>
+                    <p>ID: STU-12345</p>
+                </div>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <!-- Navigation items will be injected by JS -->
+                    </ul>
+                </nav>
+            </div>
+            <div class="sidebar-footer">
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="#"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg><span class="text">Logout</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- 
+        ==========================================================================
+        *   MAIN CONTENT
+        ==========================================================================
+        -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <h1 id="main-title">Dashboard</h1>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" placeholder="Search anything..." id="searchInput">
+                    </div>
+                    <button class="icon-btn" aria-label="Notifications" id="notificationBtn">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge">5</span>
+                    </button>
+                    <button class="icon-btn theme-switcher" id="theme-switcher" aria-label="Toggle theme">
+                        <svg class="icon light-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="icon dark-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: DASHBOARD
+            ==========================================================================
+            -->
+            <section id="dashboard" class="content-section active">
+                <!-- Welcome Message -->
+                <div class="alert alert-success">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    Welcome back, Johnathan! You have 3 upcoming assignments and 1 exam this week.
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid-container-4col">
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--primary-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>92.5%</h3>
+                            <p>Overall Attendance</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--warning-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>03</h3>
+                            <p>Pending Assignments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--success-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>8.7</h3>
+                            <p>Current GPA</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--danger-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>₹1,250</h3>
+                            <p>Outstanding Dues</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Content -->
+                <div class="grid-container-2col" style="margin-top: 2rem;">
+                    <!-- Recent Notifications -->
+                    <div class="card">
+                        <h2>Recent Notifications</h2>
+                        <div class="detail-list" style="margin-top:2rem">
+                            <p style="align-items:start">
+                                <span>
+                                    <strong style="display:block; color:var(--text-color);">
+                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M12 6.253v11.494m-5.75-8.494l11.5 0"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z">
+                                            </path>
+                                        </svg>Assignment Reminder</strong>
+                                    CS203 Project Phase 1 due in 3 days
+                                </span>
+                                <span class="small-text">2 hours ago</span>
+                            </p>
+                            <p style="align-items:start">
+                                <span>
+                                    <strong style="display:block; color:var(--text-color);">
+                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                            </path>
+                                        </svg>Fee Payment Due</strong>
+                                    Hostel Fee for November is due on Nov 5th
+                                </span>
+                                <span class="small-text">2 days ago</span>
+                            </p>
+                            <p style="align-items:start">
+                                <span>
+                                    <strong style="display:block; color:var(--text-color);">
+                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>Assignment Graded</strong>
+                                    CS201 - Lab 1 has been graded (95/100)
+                                </span>
+                                <span class="small-text">4 days ago</span>
+                            </p>
+                            <p style="align-items:start">
+                                <span>
+                                    <strong style="display:block; color:var(--text-color);">
+                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z">
+                                            </path>
+                                        </svg>Library Reminder</strong>
+                                    'Modern Database Management' due for return
+                                </span>
+                                <span class="small-text">5 days ago</span>
+                            </p>
+                            <p style="align-items:start">
+                                <span>
+                                    <strong style="display:block; color:var(--text-color);">
+                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z">
+                                            </path>
+                                        </svg>Bus Route Update</strong>
+                                    Route R-05 timing changed to 8:15 AM
+                                </span>
+                                <span class="small-text">1 week ago</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Today's Schedule -->
+                    <div class="card">
+                        <h2>Today's Schedule</h2>
+                        <div style="overflow-x:auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Course</th>
+                                        <th>Venue</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>09:00-10:00</td>
+                                        <td>CS201: Data Structures</td>
+                                        <td>LT-301</td>
+                                        <td><span class="status status-verified">Lecture</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>11:00-12:00</td>
+                                        <td>CS202: Algorithms</td>
+                                        <td>LT-302</td>
+                                        <td><span class="status status-verified">Lecture</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>02:00-04:00</td>
+                                        <td>CS204: OS Lab</td>
+                                        <td>Lab-1</td>
+                                        <td><span class="status status-submitted">Lab</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid-container-2col" style="margin-top: 2rem;">
+                    <div class="card">
+                        <h2>GPA Trend</h2>
+                        <div class="chart-container">
+                            <canvas id="examLineChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h2>Subject-wise Performance</h2>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h2>Quick Actions</h2>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                        <button class="btn btn-primary" onclick="showSection('assignments')">
+                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            View Assignments
+                        </button>
+                        <button class="btn btn-success"
+                            onclick="document.getElementById('leaveModal').style.display = 'flex'">
+                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            Apply for Leave
+                        </button>
+                        <button class="btn btn-warning" onclick="showSection('fees')">
+                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                            Pay Dues
+                        </button>
+                        <button class="btn btn-secondary" onclick="showSection('library')">
+                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            Check Library Books
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: PROFILE
+            ==========================================================================
+            -->
+            <section id="profile" class="content-section">
+                <div class="card">
+                    <div style="display:flex; align-items:flex-start; gap:2rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                        <img src="https://i.pinimg.com/564x/02/57/5a/02575a7f282496587321016584281308.jpg"
+                            alt="Student Photo"
+                            style="width:120px; height:120px; border-radius:1rem; object-fit: cover;">
+                        <div style="flex-grow:1;">
+                            <h2 style="border:none; padding:0; margin:0">Johnathan Doe</h2>
+                            <p style="color:var(--muted-text-color); margin-bottom:1rem;">B.Sc. Computer Science | 2nd
+                                Year | 3rd Semester</p>
+                            <div class="detail-list">
+                                <p><strong>Student ID:</strong><span>STU-12345</span></p>
+                                <p><strong>Enrollment Date:</strong><span>01 Sep 2023</span></p>
+                                <p><strong>Academic Status:</strong><span class="status status-verified">Active</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary"
+                            onclick="alert('Profile editing functionality would be implemented here')">Edit
+                            Profile</button>
+                    </div>
+
+                    <div class="grid-container-2col">
+                        <div class="card" style="padding:0; box-shadow:none; border:none;">
+                            <h3>Personal Details</h3>
+                            <div class="detail-list" style="margin-top:1rem">
+                                <p><strong>Date of Birth:</strong> <span>15 Aug 2004</span></p>
+                                <p><strong>Gender:</strong> <span>Male</span></p>
+                                <p><strong>Nationality:</strong> <span>Indian</span></p>
+                                <p><strong>Blood Group:</strong> <span>O+</span></p>
+                                <p><strong>Phone:</strong> <span>+91 98765 43210</span></p>
+                                <p><strong>Email:</strong> <span>johnathan.doe@university.edu</span></p>
+                            </div>
+                        </div>
+                        <div class="card" style="padding:0; box-shadow:none; border:none;">
+                            <h3>Guardian Details</h3>
+                            <div class="detail-list" style="margin-top:1rem">
+                                <p><strong>Name:</strong> <span>Richard Doe</span></p>
+                                <p><strong>Relation:</strong> <span>Father</span></p>
+                                <p><strong>Contact:</strong> <span>+91 98765 12345</span></p>
+                                <p><strong>Email:</strong> <span>richard.doe@email.com</span></p>
+                                <p><strong>Occupation:</strong> <span>Software Engineer</span></p>
+                                <p><strong>Address:</strong> <span>123 Main St, Mumbai, MH</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Information -->
+                <div class="card">
+                    <h2>Academic Information</h2>
+                    <div class="grid-container-2col">
+                        <div class="detail-list">
+                            <p><strong>Program:</strong><span>Bachelor of Science in Computer Science</span></p>
+                            <p><strong>Specialization:</strong><span>Software Engineering</span></p>
+                            <p><strong>Current Semester:</strong><span>3rd Semester</span></p>
+                            <p><strong>Expected Graduation:</strong><span>May 2027</span></p>
+                        </div>
+                        <div class="detail-list">
+                            <p><strong>Current GPA:</strong><span>8.7/10.0</span></p>
+                            <p><strong>Overall Attendance:</strong><span>92.5%</span></p>
+                            <p><strong>Credits Completed:</strong><span>45/120</span></p>
+                            <p><strong>Academic Advisor:</strong><span>Dr. Sarah Johnson</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Documents on Record</h2>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>Upload Date</th>
+                                    <th>Status</th>
+                                    <th>Expiry Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Admission Letter</td>
+                                    <td>20 Aug 2023</td>
+                                    <td><span class="status status-verified">Verified</span></td>
+                                    <td>-</td>
+                                    <td><button class="btn btn-secondary">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>High School Transcript</td>
+                                    <td>21 Aug 2023</td>
+                                    <td><span class="status status-verified">Verified</span></td>
+                                    <td>-</td>
+                                    <td><button class="btn btn-secondary">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Identity Document</td>
+                                    <td>20 Aug 2023</td>
+                                    <td><span class="status status-verified">Verified</span></td>
+                                    <td>15 Aug 2029</td>
+                                    <td><button class="btn btn-secondary">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Medical Certificate</td>
+                                    <td>25 Aug 2023</td>
+                                    <td><span class="status status-verified">Verified</span></td>
+                                    <td>25 Aug 2024</td>
+                                    <td><button class="btn btn-warning">Renew Soon</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Proof of Residence</td>
+                                    <td>-</td>
+                                    <td><span class="status status-pending">Pending</span></td>
+                                    <td>-</td>
+                                    <td><button class="btn btn-primary">Upload</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: ATTENDANCE
+            ==========================================================================
+            -->
+            <section id="attendance" class="content-section">
+                <div class="grid-container-4col">
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--primary-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>346</h3>
+                            <p>Total Classes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--success-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>320</h3>
+                            <p>Attended</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--danger-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>26</h3>
+                            <p>Missed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--warning-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>92.5%</h3>
+                            <p>Overall %</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Course-wise Attendance Analysis</h2>
+                    <div class="chart-container">
+                        <canvas id="attendanceBarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Attendance Filters -->
+                <div class="card">
+                    <h2>Detailed Attendance Log</h2>
+                    <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <select id="courseFilter" class="form-control"
+                            style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg-color);">
+                            <option value="">All Courses</option>
+                            <option value="CS201">CS201: Data Structures</option>
+                            <option value="CS202">CS202: Algorithms</option>
+                            <option value="CS203">CS203: Databases</option>
+                            <option value="CS204">CS204: Operating Systems</option>
+                            <option value="MA201">MA201: Calculus II</option>
+                        </select>
+                        <select id="statusFilter" class="form-control"
+                            style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg-color);">
+                            <option value="">All Status</option>
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="late">Late</option>
+                        </select>
+                        <input type="date" id="dateFilter" class="form-control"
+                            style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg-color);">
+                    </div>
+
+                    <div style="overflow-x:auto;">
+                        <table id="attendanceTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Course</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Faculty</th>
+                                    <th>Topic Covered</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>19 Sep 2025</td>
+                                    <td>CS201: Data Structures</td>
+                                    <td>09:00 - 10:00</td>
+                                    <td><span class="status status-verified">Present</span></td>
+                                    <td>Dr. Alan Turing</td>
+                                    <td>Binary Trees Implementation</td>
+                                </tr>
+                                <tr>
+                                    <td>18 Sep 2025</td>
+                                    <td>MA201: Calculus II</td>
+                                    <td>10:00 - 11:00</td>
+                                    <td><span class="status status-verified">Present</span></td>
+                                    <td>Dr. Ada Lovelace</td>
+                                    <td>Integration by Parts</td>
+                                </tr>
+                                <tr>
+                                    <td>18 Sep 2025</td>
+                                    <td>CS202: Algorithms</td>
+                                    <td>11:00 - 12:00</td>
+                                    <td><span class="status status-pending">Absent</span></td>
+                                    <td>Dr. Grace Hopper</td>
+                                    <td>Quick Sort Analysis</td>
+                                </tr>
+                                <tr>
+                                    <td>17 Sep 2025</td>
+                                    <td>CS201: Data Structures</td>
+                                    <td>09:00 - 10:00</td>
+                                    <td><span class="status status-verified">Present</span></td>
+                                    <td>Dr. Alan Turing</td>
+                                    <td>Stack Applications</td>
+                                </tr>
+                                <tr>
+                                    <td>17 Sep 2025</td>
+                                    <td>CS203: Databases</td>
+                                    <td>01:00 - 02:00</td>
+                                    <td><span class="status status-submitted">Late</span></td>
+                                    <td>Dr. Charles Babbage</td>
+                                    <td>SQL Joins</td>
+                                </tr>
+                                <tr>
+                                    <td>16 Sep 2025</td>
+                                    <td>CS204: Operating Systems</td>
+                                    <td>02:00 - 04:00</td>
+                                    <td><span class="status status-verified">Present</span></td>
+                                    <td>Dr. Dennis Ritchie</td>
+                                    <td>Process Synchronization Lab</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: ASSIGNMENTS
+            ==========================================================================
+            -->
+            <section id="assignments" class="content-section">
+                <div class="card">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="all">All (12)</button>
+                        <button class="tab-btn" data-tab="pending">Pending (3)</button>
+                        <button class="tab-btn" data-tab="submitted">Submitted (2)</button>
+                        <button class="tab-btn" data-tab="graded">Graded (7)</button>
+                    </div>
+
+                    <div class="tab-content" id="all-assignments">
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Assignment</th>
+                                        <th>Course</th>
+                                        <th>Assigned</th>
+                                        <th>Deadline</th>
+                                        <th>Status</th>
+                                        <th>Marks</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <strong>Project Phase 1: Database Design</strong>
+                                            <div class="small-text">Design ER diagram and normalize database schema
+                                            </div>
+                                        </td>
+                                        <td>CS203</td>
+                                        <td>10 Oct 2025</td>
+                                        <td>15 Nov 2025</td>
+                                        <td><span class="status status-pending">Pending</span></td>
+                                        <td>--/50</td>
+                                        <td><button class="btn btn-primary"
+                                                onclick="showUploadModal('CS203 Project Phase 1')">Upload</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Problem Set 3: Advanced Calculus</strong>
+                                            <div class="small-text">Solve integration and differential problems</div>
+                                        </td>
+                                        <td>MA201</td>
+                                        <td>20 Oct 2025</td>
+                                        <td>30 Oct 2025</td>
+                                        <td><span class="status status-pending">Pending</span></td>
+                                        <td>--/30</td>
+                                        <td><button class="btn btn-primary"
+                                                onclick="showUploadModal('MA201 Problem Set 3')">Upload</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>OS Concepts: Memory Management</strong>
+                                            <div class="small-text">Research paper on virtual memory systems</div>
+                                        </td>
+                                        <td>CS204</td>
+                                        <td>22 Oct 2025</td>
+                                        <td>02 Nov 2025</td>
+                                        <td><span class="status status-pending">Pending</span></td>
+                                        <td>--/40</td>
+                                        <td><button class="btn btn-primary"
+                                                onclick="showUploadModal('CS204 Memory Management')">Upload</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Lab 2: Advanced Sorting Algorithms</strong>
+                                            <div class="small-text">Implement and analyze merge sort and heap sort
+                                            </div>
+                                        </td>
+                                        <td>CS202</td>
+                                        <td>18 Oct 2025</td>
+                                        <td>28 Oct 2025</td>
+                                        <td><span class="status status-submitted">Submitted</span></td>
+                                        <td>--/25</td>
+                                        <td><button class="btn btn-secondary">View</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Lab 1: Stack Implementation</strong>
+                                            <div class="small-text">Create stack data structure with all operations
+                                            </div>
+                                        </td>
+                                        <td>CS201</td>
+                                        <td>01 Oct 2025</td>
+                                        <td>15 Oct 2025</td>
+                                        <td><span class="status status-graded">Graded</span></td>
+                                        <td>95/100</td>
+                                        <td><button class="btn btn-success"
+                                                onclick="showFeedback('CS201 Lab 1', 95)">Feedback</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Database Normalization Exercise</strong>
+                                            <div class="small-text">Convert unnormalized tables to 3NF</div>
+                                        </td>
+                                        <td>CS203</td>
+                                        <td>25 Sep 2025</td>
+                                        <td>05 Oct 2025</td>
+                                        <td><span class="status status-graded">Graded</span></td>
+                                        <td>88/100</td>
+                                        <td><button class="btn btn-success"
+                                                onclick="showFeedback('CS203 Normalization', 88)">Feedback</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assignment Progress -->
+                <div class="card">
+                    <h2>Assignment Progress Overview</h2>
+                    <div class="grid-container-2col">
+                        <div>
+                            <h3>This Month's Statistics</h3>
+                            <div class="detail-list">
+                                <p><strong>Total Assignments:</strong><span>8</span></p>
+                                <p><strong>Completed on Time:</strong><span>6 (75%)</span></p>
+                                <p><strong>Late Submissions:</strong><span>1 (12.5%)</span></p>
+                                <p><strong>Pending:</strong><span>3 (37.5%)</span></p>
+                                <p><strong>Average Score:</strong><span>89.2/100</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Upcoming Deadlines</h3>
+                            <div class="detail-list">
+                                <p><strong>CS204 Memory Management:</strong><span style="color: var(--danger-color);">2
+                                        days left</span></p>
+                                <p><strong>MA201 Problem Set 3:</strong><span style="color: var(--warning-color);">11
+                                        days left</span></p>
+                                <p><strong>CS203 Project Phase 1:</strong><span style="color: var(--success-color);">27
+                                        days left</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: FEES & LEDGER
+            ==========================================================================
+            -->
+            <section id="fees" class="content-section">
+                <div class="alert alert-warning">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                        </path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Outstanding dues of ₹1,250.00 are pending. Please clear dues by Nov 5th to avoid late fees.
+                </div>
+
+                <div class="grid-container-4col">
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--success-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>₹6,252.50</h3>
+                            <p>Total Paid</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--danger-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 style="color:var(--danger-color)">₹1,250.00</h3>
+                            <p>Outstanding Dues</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--primary-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>₹7,502.50</h3>
+                            <p>Total Payable</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--warning-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Nov 5</h3>
+                            <p>Next Due Date</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Options -->
+                <div class="card">
+                    <h2>Quick Payment</h2>
+                    <div class="grid-container-2col">
+                        <div>
+                            <h3>Outstanding Items</h3>
+                            <div class="detail-list">
+                                <p><strong>Hostel Fee (Nov 2025):</strong><span
+                                        style="color: var(--danger-color);">₹1,000.00</span></p>
+                                <p><strong>Exam Fee (Semester 3):</strong><span
+                                        style="color: var(--danger-color);">₹250.00</span></p>
+                                <p><strong>Late Fee:</strong><span style="color: var(--muted-text-color);">₹0.00</span>
+                                </p>
+                                <p><strong>Total Amount:</strong><span
+                                        style="color: var(--danger-color); font-weight: bold;">₹1,250.00</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Payment Methods</h3>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <button class="btn btn-primary" style="width: 100%;" onclick="processPayment('full')">
+                                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                    Pay Full Amount (₹1,250.00)
+                                </button>
+                                <button class="btn btn-secondary" style="width: 100%;"
+                                    onclick="processPayment('partial')">
+                                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                        </path>
+                                    </svg>
+                                    Pay Partial Amount
+                                </button>
+                                <button class="btn btn-warning" style="width: 100%;"
+                                    onclick="processPayment('installment')">
+                                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                    Setup Installment Plan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Fee Structure & Breakdown</h2>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fee Type</th>
+                                    <th>Amount</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Payment Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Tuition Fee (Semester 3)</strong></td>
+                                    <td>₹5,000.00</td>
+                                    <td>01 Sep 2025</td>
+                                    <td><span class="status status-verified">Paid</span></td>
+                                    <td>28 Aug 2025</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Hostel Fee (October)</strong></td>
+                                    <td>₹1,000.00</td>
+                                    <td>01 Oct 2025</td>
+                                    <td><span class="status status-verified">Paid</span></td>
+                                    <td>30 Sep 2025</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Hostel Fee (November)</strong></td>
+                                    <td>₹1,000.00</td>
+                                    <td>05 Nov 2025</td>
+                                    <td><span class="status status-pending">Due</span></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Exam Fee</strong></td>
+                                    <td>₹250.00</td>
+                                    <td>01 Nov 2025</td>
+                                    <td><span class="status status-pending">Due</span></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Library Security Deposit</strong></td>
+                                    <td>₹100.00</td>
+                                    <td>01 Sep 2025</td>
+                                    <td><span class="status status-verified">Paid</span></td>
+                                    <td>25 Aug 2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Transaction History</h2>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Transaction ID</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Payment Method</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>30 Sep 2025</td>
+                                    <td>TXN-001234</td>
+                                    <td>Hostel Fee (October)</td>
+                                    <td>₹1,000.00</td>
+                                    <td>Credit Card</td>
+                                    <td><span class="status status-verified">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>28 Aug 2025</td>
+                                    <td>TXN-001198</td>
+                                    <td>Tuition Fee (Sem 3)</td>
+                                    <td>₹5,000.00</td>
+                                    <td>Bank Transfer</td>
+                                    <td><span class="status status-verified">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>25 Aug 2025</td>
+                                    <td>TXN-001187</td>
+                                    <td>Library Security Deposit</td>
+                                    <td>₹100.00</td>
+                                    <td>Debit Card</td>
+                                    <td><span class="status status-verified">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>18 Oct 2025</td>
+                                    <td>TXN-001298</td>
+                                    <td>Library Fine Payment</td>
+                                    <td>₹2.50</td>
+                                    <td>Cash</td>
+                                    <td><span class="status status-verified">Success</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: EXAMS & RESULTS
+            ==========================================================================
+            -->
+            <section id="exams" class="content-section">
+                <div class="card">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="schedule">Exam Schedule</button>
+                        <button class="tab-btn" data-tab="admit">Admit Cards</button>
+                        <button class="tab-btn" data-tab="results">Results (Sem 2)</button>
+                        <button class="tab-btn" data-tab="analysis">Performance Analysis</button>
+                    </div>
+
+                    <div class="tab-content" id="schedule-content">
+                        <div class="alert alert-success">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            Semester 3 Final Examinations start from December 10th, 2025. Admit cards will be available
+                            from December 1st.
+                        </div>
+
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Duration</th>
+                                        <th>Venue</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>CS201: Data Structures</strong><br><span class="small-text">Final
+                                                Examination</span></td>
+                                        <td>10 Dec 2025</td>
+                                        <td>10:00 AM - 1:00 PM</td>
+                                        <td>3 hours</td>
+                                        <td>Hall A-101</td>
+                                        <td><span class="status status-pending">Scheduled</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>MA201: Calculus II</strong><br><span class="small-text">Final
+                                                Examination</span></td>
+                                        <td>12 Dec 2025</td>
+                                        <td>10:00 AM - 1:00 PM</td>
+                                        <td>3 hours</td>
+                                        <td>Hall B-201</td>
+                                        <td><span class="status status-pending">Scheduled</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>CS202: Algorithms</strong><br><span class="small-text">Final
+                                                Examination</span></td>
+                                        <td>14 Dec 2025</td>
+                                        <td>10:00 AM - 1:00 PM</td>
+                                        <td>3 hours</td>
+                                        <td>Hall A-101</td>
+                                        <td><span class="status status-pending">Scheduled</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>CS203: Databases</strong><br><span class="small-text">Final
+                                                Examination</span></td>
+                                        <td>16 Dec 2025</td>
+                                        <td>02:00 PM - 5:00 PM</td>
+                                        <td>3 hours</td>
+                                        <td>Hall C-301</td>
+                                        <td><span class="status status-pending">Scheduled</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>CS204: Operating Systems</strong><br><span class="small-text">Final
+                                                Examination</span></td>
+                                        <td>18 Dec 2025</td>
+                                        <td>10:00 AM - 1:00 PM</td>
+                                        <td>3 hours</td>
+                                        <td>Hall A-102</td>
+                                        <td><span class="status status-pending">Scheduled</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Semester 2 Final Results</h2>
+                    <div class="grid-container-2col" style="margin-bottom: 2rem;">
+                        <div class="card" style="padding: 1.5rem; box-shadow: none; border: none;">
+                            <h3>Academic Performance</h3>
+                            <div class="detail-list">
+                                <p><strong>Semester GPA:</strong><span
+                                        style="color: var(--success-color); font-weight: bold;">8.8</span></p>
+                                <p><strong>Cumulative GPA:</strong><span
+                                        style="color: var(--success-color); font-weight: bold;">8.7</span></p>
+                                <p><strong>Class Rank:</strong><span>12/85</span></p>
+                                <p><strong>Credits Earned:</strong><span>24/24</span></p>
+                            </div>
+                        </div>
+                        <div class="card" style="padding: 1.5rem; box-shadow: none; border: none;">
+                            <h3>Grade Distribution</h3>
+                            <div class="chart-container-small">
+                                <canvas id="gradeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Course Code</th>
+                                    <th>Course Name</th>
+                                    <th>Credits</th>
+                                    <th>Internals (30)</th>
+                                    <th>Externals (70)</th>
+                                    <th>Total (100)</th>
+                                    <th>Grade</th>
+                                    <th>Grade Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CS101</td>
+                                    <td>Introduction to Programming</td>
+                                    <td>4</td>
+                                    <td>28</td>
+                                    <td>65</td>
+                                    <td>93</td>
+                                    <td>A+</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>MA101</td>
+                                    <td>Calculus I</td>
+                                    <td>4</td>
+                                    <td>25</td>
+                                    <td>55</td>
+                                    <td>80</td>
+                                    <td>A</td>
+                                    <td>9</td>
+                                </tr>
+                                <tr>
+                                    <td>PH101</td>
+                                    <td>Physics I</td>
+                                    <td>3</td>
+                                    <td>22</td>
+                                    <td>50</td>
+                                    <td>72</td>
+                                    <td>B+</td>
+                                    <td>8</td>
+                                </tr>
+                                <tr>
+                                    <td>EE101</td>
+                                    <td>Basic Electronics</td>
+                                    <td>3</td>
+                                    <td>26</td>
+                                    <td>60</td>
+                                    <td>86</td>
+                                    <td>A</td>
+                                    <td>9</td>
+                                </tr>
+                                <tr>
+                                    <td>EN101</td>
+                                    <td>Technical Communication</td>
+                                    <td>2</td>
+                                    <td>27</td>
+                                    <td>58</td>
+                                    <td>85</td>
+                                    <td>A</td>
+                                    <td>9</td>
+                                </tr>
+                                <tr>
+                                    <td>CS102</td>
+                                    <td>Programming Lab</td>
+                                    <td>2</td>
+                                    <td>29</td>
+                                    <td>69</td>
+                                    <td>98</td>
+                                    <td>A+</td>
+                                    <td>10</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Performance Comparison -->
+                <div class="card">
+                    <h2>Semester-wise Performance Comparison</h2>
+                    <div class="chart-container">
+                        <canvas id="semesterComparisonChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: TIMETABLE
+            ==========================================================================
+            -->
+            <section id="timetable" class="content-section">
+                <div class="card">
+                    <h2>Weekly Class Timetable - Semester 3</h2>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 120px;">Time</th>
+                                    <th>Monday</th>
+                                    <th>Tuesday</th>
+                                    <th>Wednesday</th>
+                                    <th>Thursday</th>
+                                    <th>Friday</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>09:00 - 10:00</strong></td>
+                                    <td>
+                                        <strong>CS201: Data Structures</strong><br>
+                                        <span class="small-text">Dr. Alan Turing | LT-301</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS202: Algorithms</strong><br>
+                                        <span class="small-text">Dr. Grace Hopper | LT-302</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS201: Data Structures</strong><br>
+                                        <span class="small-text">Dr. Alan Turing | LT-301</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS204: Operating Systems</strong><br>
+                                        <span class="small-text">Dr. Dennis Ritchie | LT-201</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                    <td style="background: var(--bg-color); text-align: center;">
+                                        <span style="color: var(--muted-text-color);">Free Period</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>10:00 - 11:00</strong></td>
+                                    <td>
+                                        <strong>MA201: Calculus II</strong><br>
+                                        <span class="small-text">Dr. Ada Lovelace | LT-202</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS202: Algorithm Lab</strong><br>
+                                        <span class="small-text">Dr. Grace Hopper | Lab-2</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS203: Databases</strong><br>
+                                        <span class="small-text">Dr. Charles Babbage | LT-101</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS204: OS Lab</strong><br>
+                                        <span class="small-text">Dr. Dennis Ritchie | Lab-1</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS201: DS Lab</strong><br>
+                                        <span class="small-text">Dr. Alan Turing | Lab-3</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>11:00 - 12:00</strong></td>
+                                    <td style="background: var(--bg-color); text-align: center;">
+                                        <span style="color: var(--muted-text-color);">Break</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS202: Algorithm Lab</strong><br>
+                                        <span class="small-text">Dr. Grace Hopper | Lab-2</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                    <td>
+                                        <strong>MA201: Calculus II</strong><br>
+                                        <span class="small-text">Dr. Ada Lovelace | LT-202</span><br>
+                                        <span class="small-text" style="color: var(--success-color);">Tutorial</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS204: OS Lab</strong><br>
+                                        <span class="small-text">Dr. Dennis Ritchie | Lab-1</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS201: DS Lab</strong><br>
+                                        <span class="small-text">Dr. Alan Turing | Lab-3</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                </tr>
+                                <tr style="background: var(--bg-color);">
+                                    <td><strong>12:00 - 01:00</strong></td>
+                                    <td colspan="5" style="text-align:center; font-weight: bold;">
+                                        LUNCH BREAK
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>01:00 - 02:00</strong></td>
+                                    <td>
+                                        <strong>CS203: Databases</strong><br>
+                                        <span class="small-text">Dr. Charles Babbage | LT-101</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                    <td style="background: var(--bg-color); text-align: center;">
+                                        <span style="color: var(--muted-text-color);">Free Period</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS204: Operating Systems</strong><br>
+                                        <span class="small-text">Dr. Dennis Ritchie | LT-201</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS203: Database Lab</strong><br>
+                                        <span class="small-text">Dr. Charles Babbage | Lab-4</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                    <td>
+                                        <strong>MA201: Calculus II</strong><br>
+                                        <span class="small-text">Dr. Ada Lovelace | LT-202</span><br>
+                                        <span class="small-text" style="color: var(--primary-color);">Lecture</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>02:00 - 03:00</strong></td>
+                                    <td>
+                                        <strong>CS202: Algorithms</strong><br>
+                                        <span class="small-text">Dr. Grace Hopper | LT-302</span><br>
+                                        <span class="small-text" style="color: var(--success-color);">Tutorial</span>
+                                    </td>
+                                    <td style="background: var(--bg-color); text-align: center;">
+                                        <span style="color: var(--muted-text-color);">Free Period</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS203: Database Lab</strong><br>
+                                        <span class="small-text">Dr. Charles Babbage | Lab-4</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                    <td>
+                                        <strong>CS203: Database Lab</strong><br>
+                                        <span class="small-text">Dr. Charles Babbage | Lab-4</span><br>
+                                        <span class="small-text" style="color: var(--warning-color);">Lab</span>
+                                    </td>
+                                    <td style="background: var(--bg-color); text-align: center;">
+                                        <span style="color: var(--muted-text-color);">Free Period</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Weekly Schedule Overview -->
+                <div class="grid-container-2col">
+                    <div class="card">
+                        <h3>This Week's Highlights</h3>
+                        <div class="detail-list">
+                            <p><strong>Monday:</strong><span>CS203 Database Quiz (2 PM)</span></p>
+                            <p><strong>Tuesday:</strong><span>CS202 Lab Assignment Due</span></p>
+                            <p><strong>Wednesday:</strong><span>MA201 Tutorial Session</span></p>
+                            <p><strong>Thursday:</strong><span>OS Lab Project Demo</span></p>
+                            <p><strong>Friday:</strong><span>Data Structures Lab Viva</span></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Faculty Office Hours</h3>
+                        <div class="detail-list">
+                            <p><strong>Dr. Alan Turing:</strong><span>Mon, Wed 3-4 PM</span></p>
+                            <p><strong>Dr. Grace Hopper:</strong><span>Tue, Thu 4-5 PM</span></p>
+                            <p><strong>Dr. Charles Babbage:</strong><span>Wed, Fri 2-3 PM</span></p>
+                            <p><strong>Dr. Dennis Ritchie:</strong><span>Mon, Fri 3-4 PM</span></p>
+                            <p><strong>Dr. Ada Lovelace:</strong><span>Tue, Thu 2-3 PM</span></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+             ==========================================================================
+             *   SECTION: HOSTEL
+             ==========================================================================
+             -->
+            <section id="hostel" class="content-section">
+                <div class="grid-container-2col">
+                    <div class="card">
+                        <h3>My Room Details</h3>
+                        <div class="detail-list" style="margin-top:1rem">
+                            <p><strong>Hostel Block:</strong><span>A-Wing</span></p>
+                            <p><strong>Room Number:</strong><span>A-101</span></p>
+                            <p><strong>Room Type:</strong><span>Double Occupancy</span></p>
+                            <p><strong>Floor:</strong><span>Ground Floor</span></p>
+                            <p><strong>Roommate:</strong><span>Alex Johnson (STU-12346)</span></p>
+                            <p><strong>Room Allotted:</strong><span>01 Sep 2023</span></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Hostel Staff & Contacts</h3>
+                        <div class="detail-list" style="margin-top:1rem">
+                            <p><strong>Warden:</strong><span>Mr. Samuel Jackson</span></p>
+                            <p><strong>Warden Contact:</strong><span>+91 98765 11111</span></p>
+                            <p><strong>Caretaker (A-Wing):</strong><span>Mr. David Lee</span></p>
+                            <p><strong>Caretaker Contact:</strong><span>+91 98765 22222</span></p>
+                            <p><strong>Security Office:</strong><span>+91 98765 33333</span></p>
+                            <p><strong>Mess Manager:</strong><span>Ms. Maria Garcia</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hostel Facilities -->
+                <div class="card">
+                    <h2>Hostel Facilities & Amenities</h2>
+                    <div class="grid-container-3col">
+                        <div class="detail-list">
+                            <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Room Facilities</h4>
+                            <p><strong>Wi-Fi:</strong><span class="status status-verified">Available</span></p>
+                            <p><strong>AC/Heating:</strong><span class="status status-verified">Working</span></p>
+                            <p><strong>Study Table:</strong><span class="status status-verified">2 Units</span></p>
+                            <p><strong>Wardrobe:</strong><span class="status status-verified">2 Units</span></p>
+                        </div>
+                        <div class="detail-list">
+                            <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Common Facilities</h4>
+                            <p><strong>Laundry:</strong><span>Mon, Wed, Fri</span></p>
+                            <p><strong>Recreation Room:</strong><span>24/7 Access</span></p>
+                            <p><strong>Study Hall:</strong><span>6 AM - 11 PM</span></p>
+                            <p><strong>Gym:</strong><span>5 AM - 10 PM</span></p>
+                        </div>
+                        <div class="detail-list">
+                            <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Mess Timings</h4>
+                            <p><strong>Breakfast:</strong><span>7:00 - 9:00 AM</span></p>
+                            <p><strong>Lunch:</strong><span>12:00 - 2:00 PM</span></p>
+                            <p><strong>Evening Tea:</strong><span>4:30 - 5:30 PM</span></p>
+                            <p><strong>Dinner:</strong><span>7:00 - 9:00 PM</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Leave Applications History</h2>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Reason</th>
+                                    <th>Applied On</th>
+                                    <th>Status</th>
+                                    <th>Approved By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>10 Oct 2025</td>
+                                    <td>12 Oct 2025</td>
+                                    <td>Family Function</td>
+                                    <td>05 Oct 2025</td>
+                                    <td><span class="status status-approved">Approved</span></td>
+                                    <td>Mr. Samuel Jackson</td>
+                                </tr>
+                                <tr>
+                                    <td>15 Sep 2025</td>
+                                    <td>15 Sep 2025</td>
+                                    <td>Medical Appointment</td>
+                                    <td>12 Sep 2025</td>
+                                    <td><span class="status status-approved">Approved</span></td>
+                                    <td>Mr. Samuel Jackson</td>
+                                </tr>
+                                <tr>
+                                    <td>20 Aug 2025</td>
+                                    <td>25 Aug 2025</td>
+                                    <td>Going Home</td>
+                                    <td>15 Aug 2025</td>
+                                    <td><span class="status status-approved">Approved</span></td>
+                                    <td>Mr. Samuel Jackson</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="text-align: right; margin-top:2rem">
+                        <button id="applyLeaveBtn" class="btn btn-primary">Apply for New Leave</button>
+                    </div>
+                </div>
+
+                <!-- Mess Menu -->
+                <div class="card">
+                    <h2>Weekly Mess Menu</h2>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Breakfast</th>
+                                    <th>Lunch</th>
+                                    <th>Evening Snack</th>
+                                    <th>Dinner</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Monday</strong></td>
+                                    <td>Poha, Jalebi</td>
+                                    <td>Rice, Dal, Chicken Curry</td>
+                                    <td>Tea, Biscuits</td>
+                                    <td>Roti, Mixed Veg, Salad</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tuesday</strong></td>
+                                    <td>Aloo Paratha, Curd</td>
+                                    <td>Pasta, Garlic Bread</td>
+                                    <td>Coffee, Cookies</td>
+                                    <td>Rice, Fish Curry, Pickle</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Wednesday</strong></td>
+                                    <td>Idli, Sambar</td>
+                                    <td>Rice, Rajma, Paneer</td>
+                                    <td>Tea, Samosa</td>
+                                    <td>Roti, Dal Fry, Yogurt</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Thursday</strong></td>
+                                    <td>Upma, Coconut Chutney</td>
+                                    <td>Biryani, Raita, Pickle</td>
+                                    <td>Juice, Cake</td>
+                                    <td>Roti, Chicken, Salad</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Friday</strong></td>
+                                    <td>Dosa, Chutney</td>
+                                    <td>Rice, Chole, Bhatura</td>
+                                    <td>Tea, Pakoda</td>
+                                    <td>Special Dinner Menu</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: LIBRARY  
+            ==========================================================================
+            -->
+            <section id="library" class="content-section">
+                <div class="grid-container-4col">
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--primary-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>02</h3>
+                            <p>Books Issued</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--danger-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 style="color:var(--danger-color)">₹2.50</h3>
+                            <p>Fines Due</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--success-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>23</h3>
+                            <p>Books in History</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-container" style="background:var(--warning-color)">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>3</h3>
+                            <p>Renewals Left</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Currently Issued Books</h2>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Author</th>
+                                    <th>ISBN</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Fine</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Introduction to Algorithms</strong>
+                                        <div class="small-text">3rd Edition</div>
+                                    </td>
+                                    <td>Cormen, Leiserson, Rivest</td>
+                                    <td>978-0262033848</td>
+                                    <td>10 Sep 2025</td>
+                                    <td>24 Sep 2025</td>
+                                    <td style="color: var(--success-color);">₹0.00</td>
+                                    <td>
+                                        <button class="btn btn-primary"
+                                            onclick="renewBook('Introduction to Algorithms')">Renew</button>
+                                    </td>
+                                </tr>
+                                <tr style="background:rgba(239, 68, 68, 0.1);">
+                                    <td>
+                                        <strong>Modern Database Management</strong>
+                                        <div class="small-text">12th Edition</div>
+                                    </td>
+                                    <td>Hoffer, Ramesh, Topi</td>
+                                    <td>978-0133544619</td>
+                                    <td>25 Sep 2025</td>
+                                    <td style="color: var(--danger-color);">09 Oct 2025 (Overdue)</td>
+                                    <td style="color: var(--danger-color);">₹2.50</td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.5rem; flex-wrap:wrap;">
+                                            <button class="btn btn-warning"
+                                                onclick="renewBook('Modern Database Management')">Renew</button>
+                                            <button class="btn btn-danger"
+                                                onclick="payFine('Modern Database Management')">Pay
+                                                Fine</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Library Services -->
+                <div class="card">
+                    <h2>Library Services & Hours</h2>
+                    <div class="grid-container-2col">
+                        <div>
+                            <h3>Operating Hours</h3>
+                            <div class="detail-list">
+                                <p><strong>Monday - Friday:</strong><span>8:00 AM - 10:00 PM</span></p>
+                                <p><strong>Saturday:</strong><span>9:00 AM - 6:00 PM</span></p>
+                                <p><strong>Sunday:</strong><span>10:00 AM - 5:00 PM</span></p>
+                                <p><strong>Study Hall (24/7):</strong><span
+                                        class="status status-verified">Available</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Available Services</h3>
+                            <div class="detail-list">
+                                <p><strong>Book Search:</strong><span>Online Catalog</span></p>
+                                <p><strong>Digital Library:</strong><span>IEEE, ACM Access</span></p>
+                                <p><strong>Inter-library Loan:</strong><span>5 business days</span></p>
+                                <p><strong>Printing Service:</strong><span>₹5 per page</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reading History -->
+                <div class="card">
+                    <h2>Reading History & Recommendations</h2>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="history">Reading History</button>
+                        <button class="tab-btn" data-tab="recommendations">Recommended Books</button>
+                        <button class="tab-btn" data-tab="wishlist">My Wishlist</button>
+                    </div>
+
+                    <div class="tab-content" style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Author</th>
+                                    <th>Category</th>
+                                    <th>Issue Date</th>
+                                    <th>Return Date</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Operating System Concepts</strong></td>
+                                    <td>Silberschatz, Galvin</td>
+                                    <td>Computer Science</td>
+                                    <td>01 Aug 2025</td>
+                                    <td>20 Aug 2025</td>
+                                    <td>
+                                        <div class="rating-stars">
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Design Patterns</strong></td>
+                                    <td>Gang of Four</td>
+                                    <td>Software Engineering</td>
+                                    <td>15 Jul 2025</td>
+                                    <td>30 Jul 2025</td>
+                                    <td>
+                                        <div class="rating-stars">
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Clean Code</strong></td>
+                                    <td>Robert C. Martin</td>
+                                    <td>Programming</td>
+                                    <td>20 Jun 2025</td>
+                                    <td>05 Jul 2025</td>
+                                    <td>
+                                        <div class="rating-stars">
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 
+            ==========================================================================
+            *   SECTION: TRANSPORT
+            ==========================================================================
+            -->
+            <section id="transport" class="content-section">
+                <div class="card">
+                    <div class="grid-container-2col">
+                        <div>
+                            <h3>My Route Information</h3>
+                            <div class="detail-list" style="margin-top:1rem">
+                                <p><strong>Route Number:</strong> <span>R-05</span></p>
+                                <p><strong>Bus Number:</strong> <span>UNIV-BUS-21</span></p>
+                                <p><strong>Pickup Point:</strong> <span>Central Park Gate 2</span></p>
+                                <p><strong>Morning Departure:</strong> <span>8:15 AM</span></p>
+                                <p><strong>Evening Departure:</strong> <span>5:30 PM</span></p>
+                                <p><strong>Monthly Pass Status:</strong> <span
+                                        class="status status-verified">Active</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Bus Staff Information</h3>
+                            <div
+                                style="display:flex; gap:1.5rem; margin-top:1rem; justify-content: center; flex-wrap:wrap;">
+                                <div style="text-align:center;">
+                                    <img src="https://i.pinimg.com/564x/08/2c/2a/082c2a893a726bac6973c7fdb7e411b0.jpg"
+                                        alt="Driver"
+                                        style="width:80px;height:80px;border-radius:50%; object-fit: cover;">
+                                    <p style="margin-top:0.5rem"><strong>James Smith</strong><br><span
+                                            class="small-text">Driver</span><br><span class="small-text">+91 98765
+                                            44444</span></p>
+                                </div>
+                                <div style="text-align:center;">
+                                    <img src="https://i.pinimg.com/564x/3b/38/a3/3b38a3793d56b23b3a3222a012a6f2c4.jpg"
+                                        alt="Conductor"
+                                        style="width:80px;height:80px;border-radius:50%; object-fit: cover;">
+                                    <p style="margin-top:0.5rem"><strong>Robert Brown</strong><br><span
+                                            class="small-text">Conductor</span><br><span class="small-text">+91 98765
+                                            55555</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Route Details -->
+                <div class="card">
+                    <h3>Route R-05 Complete Schedule</h3>
+                    <div style="overflow-x: auto; margin-top: 1rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Stop Name</th>
+                                    <th>Morning Timing</th>
+                                    <th>Evening Timing</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>University Main Gate</strong></td>
+                                    <td>8:00 AM</td>
+                                    <td>5:30 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Shopping Complex</td>
+                                    <td>8:05 AM</td>
+                                    <td>5:35 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>City Mall Stop</td>
+                                    <td>8:10 AM</td>
+                                    <td>5:40 PM</td>
+                                </tr>
+                                <tr style="background: var(--bg-color);">
+                                    <td><strong>Central Park Gate 2 (Your Stop)</strong></td>
+                                    <td>8:15 AM</td>
+                                    <td>5:45 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Residential Area A</td>
+                                    <td>8:20 AM</td>
+                                    <td>5:50 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Metro Station</td>
+                                    <td>8:25 AM</td>
+                                    <td>5:55 PM</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Transport Services -->
+                <div class="grid-container-2col">
+                    <div class="card">
+                        <h3>Monthly Pass Details</h3>
+                        <div class="detail-list">
+                            <p><strong>Pass Type:</strong><span>Student Monthly Pass</span></p>
+                            <p><strong>Valid From:</strong><span>01 Oct 2025</span></p>
+                            <p><strong>Valid Till:</strong><span>31 Oct 2025</span></p>
+                            <p><strong>Amount Paid:</strong><span>₹450.00</span></p>
+                            <p><strong>Status:</strong><span class="status status-verified">Active</span></p>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;"
+                            onclick="renewPass()">Renew Pass for November</button>
+                    </div>
+                    <div class="card">
+                        <h3>Alternative Transport</h3>
+                        <div class="detail-list">
+                            <p><strong>Metro Station:</strong><span>0.5 km from campus</span></p>
+                            <p><strong>Taxi Booking:</strong><span>Campus Cab Service</span></p>
+                            <p><strong>Bike Rental:</strong><span>Available at Main Gate</span></p>
+                            <p><strong>Walking Distance:</strong><span>15 min to Metro</span></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ==========================================
+        // GLOBAL VARIABLES & STATE
+        // ==========================================
+        let charts = {};
+        let currentUploadAssignment = '';
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeNavigation();
+            initializeTheme();
+            initializeModals();
+            initializeTabs();
+            initializeFilters();
+            initializeSearch();
+            renderAllCharts();
+            updateNotificationBadge();
+        });
+
+        // ==========================================
+        // NAVIGATION SYSTEM
+        // ==========================================
+        function initializeNavigation() {
+            const navItems = [
+                { id: 'dashboard', text: 'Dashboard', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>' },
+                { id: 'profile', text: 'My Profile', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' },
+                { id: 'attendance', text: 'Attendance', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>' },
+                { id: 'assignments', text: 'Assignments', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>' },
+                { id: 'fees', text: 'Fees & Ledger', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>' },
+                { id: 'hostel', text: 'Hostel', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>' },
+                { id: 'library', text: 'Library', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' },
+                { id: 'exams', text: 'Exams & Results', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>' },
+                { id: 'timetable', text: 'Timetable', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' },
+                { id: 'transport', text: 'Transport', icon: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5"></path></svg>' }
+            ];
+
+            const navList = document.querySelector('.sidebar-nav ul');
+            navItems.forEach(item => {
+                navList.innerHTML += `<li><a href="#" class="nav-link ${item.id === 'dashboard' ? 'active' : ''}" data-target="${item.id}">${item.icon}<span class="text">${item.text}</span></a></li>`;
+            });
+
+            // Navigation click handlers
+            const mainTitle = document.getElementById('main-title');
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    showSection(this.dataset.target);
+                });
+            });
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+
+            const targetLink = document.querySelector(`[data-target="${sectionId}"]`);
+            const targetSection = document.getElementById(sectionId);
+
+            if (targetLink && targetSection) {
+                targetLink.classList.add('active');
+                targetSection.classList.add('active');
+                document.getElementById('main-title').textContent = targetLink.querySelector('.text').textContent;
+            }
+        }
+
+        // ==========================================
+        // THEME SYSTEM
+        // ==========================================
+        function initializeTheme() {
+            const themeSwitcher = document.getElementById('theme-switcher');
+            const doc = document.documentElement;
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            doc.setAttribute('data-theme', savedTheme);
+
+            themeSwitcher.addEventListener('click', () => {
+                const newTheme = doc.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                doc.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                renderAllCharts();
+            });
+        }
+
+        // ==========================================
+        // MODAL SYSTEM
+        // ==========================================
+        function initializeModals() {
+            // Leave Modal
+            const leaveModal = document.getElementById('leaveModal');
+            const uploadModal = document.getElementById('uploadModal');
+
+            document.getElementById('applyLeaveBtn').addEventListener('click', () => {
+                leaveModal.style.display = 'flex';
+            });
+
+            document.querySelectorAll('.modal-close-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.target.closest('.modal-overlay').style.display = 'none';
+                });
+            });
+
+            // Leave form submission
+            document.getElementById('leaveForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Leave application submitted successfully! You will receive a confirmation email shortly.');
+                leaveModal.style.display = 'none';
+            });
+
+            // Upload form submission
+            document.getElementById('uploadForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert(`Assignment "${currentUploadAssignment}" uploaded successfully!`);
+                uploadModal.style.display = 'none';
+            });
+        }
+
+        // ==========================================
+        // TABS SYSTEM
+        // ==========================================
+        function initializeTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const parent = btn.closest('.card');
+                    parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Filter table content based on tab
+                    if (btn.dataset.tab) {
+                        filterAssignmentsByStatus(btn.dataset.tab);
+                    }
+                });
+            });
+        }
+
+        // ==========================================
+        // FILTER SYSTEM
+        // ==========================================
+        function initializeFilters() {
+            const courseFilter = document.getElementById('courseFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const dateFilter = document.getElementById('dateFilter');
+
+            if (courseFilter) {
+                courseFilter.addEventListener('change', filterAttendanceTable);
+            }
+            if (statusFilter) {
+                statusFilter.addEventListener('change', filterAttendanceTable);
+            }
+            if (dateFilter) {
+                dateFilter.addEventListener('change', filterAttendanceTable);
+            }
+        }
+
+        function filterAttendanceTable() {
+            const courseFilter = document.getElementById('courseFilter').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const dateFilter = document.getElementById('dateFilter').value;
+            const table = document.getElementById('attendanceTable');
+            const rows = table.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const course = cells[1].textContent.toLowerCase();
+                const status = cells[3].textContent.toLowerCase();
+                const date = cells[0].textContent;
+
+                const courseMatch = !courseFilter || course.includes(courseFilter);
+                const statusMatch = !statusFilter || status.includes(statusFilter);
+                const dateMatch = !dateFilter || date.includes(dateFilter);
+
+                row.style.display = (courseMatch && statusMatch && dateMatch) ? '' : 'none';
+            });
+        }
+
+        function filterAssignmentsByStatus(status) {
+            const table = document.querySelector('#assignments table tbody');
+            const rows = table.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                if (status === 'all') {
+                    row.style.display = '';
+                } else {
+                    const statusCell = row.querySelector('.status');
+                    const statusText = statusCell ? statusCell.textContent.toLowerCase() : '';
+                    row.style.display = statusText.includes(status) ? '' : 'none';
+                }
+            });
+        }
+
+        // ==========================================
+        // SEARCH FUNCTIONALITY
+        // ==========================================
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                if (query.length > 2) {
+                    performSearch(query);
+                }
+            });
+        }
+
+        function performSearch(query) {
+            const searchableElements = document.querySelectorAll('table td, .detail-list span, h2, h3');
+            let results = [];
+
+            searchableElements.forEach(element => {
+                if (element.textContent.toLowerCase().includes(query)) {
+                    results.push({
+                        element: element,
+                        section: element.closest('.content-section'),
+                        text: element.textContent
+                    });
+                }
+            });
+
+            if (results.length > 0) {
+                console.log(`Found ${results.length} results for "${query}"`);
+                // Could implement search results dropdown here
+            }
+        }
+
+        // ==========================================
+        // CHART RENDERING
+        // ==========================================
+        function getChartColors() {
+            const style = getComputedStyle(document.documentElement);
+            return {
+                primary: style.getPropertyValue('--primary-color').trim(),
+                primaryLight: style.getPropertyValue('--primary-color-light').trim(),
+                success: style.getPropertyValue('--success-color').trim(),
+                warning: style.getPropertyValue('--warning-color').trim(),
+                danger: style.getPropertyValue('--danger-color').trim(),
+                grid: style.getPropertyValue('--chart-grid-color').trim(),
+                ticks: style.getPropertyValue('--chart-tick-color').trim(),
+                text: style.getPropertyValue('--text-color').trim(),
+            };
+        }
+
+        function renderAllCharts() {
+            Object.values(charts).forEach(chart => chart.destroy());
+            charts = {};
+
+            const colors = getChartColors();
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: colors.text }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: { color: colors.ticks },
+                        grid: { color: colors.grid }
+                    },
+                    x: {
+                        ticks: { color: colors.ticks },
+                        grid: { color: colors.grid }
+                    }
+                }
+            };
+
+            // Dashboard GPA Trend Chart
+            const examLineCtx = document.getElementById('examLineChart');
+            if (examLineCtx) {
+                charts.examLine = new Chart(examLineCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Sem 1', 'Sem 2', 'Sem 3 (Current)'],
+                        datasets: [{
+                            label: 'GPA',
+                            data: [8.6, 8.8, 8.7],
+                            borderColor: colors.primary,
+                            backgroundColor: colors.primary + '20',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart');
+            if (performanceCtx) {
+                charts.performance = new Chart(performanceCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['CS201', 'CS202', 'CS203', 'CS204', 'MA201'],
+                        datasets: [{
+                            label: 'Current Performance',
+                            data: [93, 85, 95, 88, 98],
+                            borderColor: colors.primary,
+                            backgroundColor: colors.primary + '20',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: colors.text } }
+                        },
+                        scales: {
+                            r: {
+                                ticks: { color: colors.ticks, backdropColor: 'transparent' },
+                                grid: { color: colors.grid },
+                                pointLabels: { color: colors.text }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Attendance Chart
+            const attBarCtx = document.getElementById('attendanceBarChart');
+            if (attBarCtx) {
+                charts.attendance = new Chart(attBarCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['CS201', 'CS202', 'CS203', 'CS204', 'MA201'],
+                        datasets: [{
+                            label: 'Attendance %',
+                            data: [93, 85, 95, 88, 98],
+                            backgroundColor: [
+                                colors.success,
+                                colors.warning,
+                                colors.success,
+                                colors.warning,
+                                colors.success
+                            ]
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+
+            // Grade Distribution Chart
+            const gradeCtx = document.getElementById('gradeChart');
+            if (gradeCtx) {
+                charts.grade = new Chart(gradeCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['A+', 'A', 'B+'],
+                        datasets: [{
+                            data: [3, 2, 1],
+                            backgroundColor: [colors.success, colors.primary, colors.warning]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: colors.text } }
+                        }
+                    }
+                });
+            }
+
+            // Semester Comparison Chart
+            const semesterCtx = document.getElementById('semesterComparisonChart');
+            if (semesterCtx) {
+                charts.semester = new Chart(semesterCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['CS101', 'MA101', 'PH101', 'EE101', 'EN101', 'CS102'],
+                        datasets: [{
+                            label: 'Semester 2 Marks',
+                            data: [93, 80, 72, 86, 85, 98],
+                            backgroundColor: colors.primaryLight
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+        }
+
+        // ==========================================
+        // INTERACTIVE FUNCTIONS
+        // ==========================================
+        function showUploadModal(assignmentName) {
+            currentUploadAssignment = assignmentName;
+            document.getElementById('uploadModal').style.display = 'flex';
+        }
+
+        function showFeedback(assignment, score) {
+            alert(`Feedback for ${assignment}:\n\nScore: ${score}/100\n\nExcellent work! Your implementation demonstrates strong understanding of the concepts. Consider optimizing the time complexity for bonus points.`);
+        }
+
+        function processPayment(type) {
+            let message = '';
+            switch (type) {
+                case 'full':
+                    message = 'Processing full payment of ₹1,250.00...\nRedirecting to payment gateway...';
+                    break;
+                case 'partial':
+                    message = 'Partial payment option selected.\nMinimum amount: ₹500.00';
+                    break;
+                case 'installment':
+                    message = 'Installment plan:\n- First installment: ₹625.00 (Due: Nov 5)\n- Second installment: ₹625.00 (Due: Nov 20)';
+                    break;
+            }
+            alert(message);
+        }
+
+        function renewBook(bookTitle) {
+            if (bookTitle.includes('Modern Database')) {
+                alert('Cannot renew overdue book. Please pay fine first.');
+            } else {
+                alert(`Book "${bookTitle}" renewed successfully!\nNew due date: Oct 8, 2025`);
+            }
+        }
+
+        function payFine(bookTitle) {
+            alert(`Fine payment of ₹2.50 for "${bookTitle}" processed successfully!`);
+        }
+
+        function renewPass() {
+            alert('Transport pass renewal initiated.\nAmount: ₹450.00\nNew validity: Nov 1 - Nov 30, 2025');
+        }
+
+        // ==========================================
+        // LIVE UPDATES
+        // ==========================================
+        function updateNotificationBadge() {
+            const badge = document.querySelector('.notification-badge');
+            if (badge) {
+                badge.textContent = '5';
+            }
+        }
+
+        // ==========================================
+        // NOTIFICATION SYSTEM
+        // ==========================================
+        document.getElementById('notificationBtn').addEventListener('click', () => {
+            alert('Notifications:\n\n• CS203 Project deadline approaching\n• Hostel fee payment due\n• Library book return reminder\n• New exam schedule published\n• Transport pass renewal available');
+        });
+    </script>
+</body>
+
+</html>

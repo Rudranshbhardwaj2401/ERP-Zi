@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ERP-Zi Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <style>a
+        /*
+      The '*' selector targets every single element on the page.
+      - box-sizing: border-box; is a critical property. It changes how the width and height of elements are calculated.
+        Instead of the final width being (width + padding + border), the padding and border are included *inside* the width.
+        This makes creating layouts much more intuitive.
+      - margin: 0; and padding: 0; reset the default spacing that browsers apply to elements, ensuring a consistent starting point.
+    */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /*
+      By setting min-height: 100vh on the body and using flexbox, we create a robust vertical centering context
+      that works reliably across different screen sizes and zoom levels.
+    */
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            min-height: 100vh;
+            /* Sets the default font for the entire page. 'Inter' is the primary, and 'sans-serif' is the fallback. */
+            font-family: 'Inter', sans-serif;
+            /* Sets the background color of the page. */
+            background: #000;
+            /* display: flex is used to create a flexible container. Along with the next two properties, it's a powerful way to center content. */
+            display: flex;
+            /* align-items: center; vertically centers the flex items (in this case, '.split-container'). */
+            align-items: center;
+            /* justify-content: center; horizontally centers the flex items. */
+            justify-content: center;
+            /* Add some padding to prevent the container from touching the edges on smaller screens */
+            padding: 1rem;
+        }
+
+        .split-container {
+            /* This tells the container to arrange its direct children (left and right panels) in a row. */
+            display: flex;
+            /*
+        WIDTH: Sets the width of the container to be 90% of the width of its parent element (the <body>).
+        Using a percentage allows the container to shrink and grow with the browser window.
+      */
+            width: 90%;
+            /* max-width ensures the container doesn't get wider than a certain point on very large screens. */
+            max-width: 1100px;
+            /*
+        REMOVED FIXED HEIGHT: The height is now determined by the content within it.
+        This is the key fix to prevent content from being cut off at different zoom levels.
+      */
+            /* Rounds the corners of the container. */
+            border-radius: 1.5rem;
+            /* Hides any content that overflows from the rounded corners. */
+            overflow: hidden;
+            /* Adds a subtle shadow for a "lifting" effect. */
+            box-shadow: 0 0.5rem 2rem 0 rgba(31, 38, 135, 0.17);
+            /* Sets the background of the overall container to white. */
+            background: white;
+        }
+
+        .left-panel {
+            /*
+        flex: 1; is a shorthand for flex-grow: 1, flex-shrink: 1, and flex-basis: 0%.
+        When both panels have 'flex: 1', it means they will each take up an equal amount of space inside the flex container,
+        effectively making them both 50% of the container's width.
+      */
+            flex: 1;
+            /*
+        Sets the background image, telling it not to repeat and to be centered.
+      */
+            background: url('https://i.pinimg.com/736x/b6/6a/e7/b66ae706a4d03c6852d6a3eaa84cfefd.jpg') no-repeat center center;
+            /* This property ensures the background image covers the entire panel, cropping as necessary without distortion. */
+            background-size: cover;
+            /* position: relative; is needed so we can position child elements absolutely within this panel. */
+            position: relative;
+            /* Uses flexbox to stack content vertically and push it to the bottom. */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            /*
+        PADDING: Adds space *inside* the borders of the panel. Using rem provides consistent, scalable spacing.
+      */
+            padding: 3rem;
+        }
+
+        .left-overlay {
+            /*
+        An absolute position takes the element out of the normal document flow.
+        'inset: 0;' is a shorthand for top: 0, right: 0, bottom: 0, left: 0.
+        This makes the overlay stretch to cover its entire parent (the .left-panel).
+      */
+            position: absolute;
+            inset: 0;
+            /* A semi-transparent black overlay to make the text on top more readable. */
+            background: rgba(0, 0, 0, .35);
+            /* This prevents the overlay from capturing mouse clicks, so you can't accidentally select it. */
+            pointer-events: none;
+        }
+
+        .quote-top {
+            color: #fff;
+            letter-spacing: 0.1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            /* Positions the quote at the top-left of the .left-panel. */
+            position: absolute;
+            top: 3rem;
+            left: 3rem;
+            z-index: 2;
+            /* Ensures this element is on top of other elements. */
+            opacity: .88;
+        }
+
+        .left-content {
+            /* z-index and position are used to layer this content on top of the overlay. */
+            z-index: 2;
+            position: relative;
+            color: #fff;
+        }
+
+        .left-content h1 {
+            font-family: 'Playfair Display', serif;
+            /* Font size in a responsive unit (vw - viewport width) allows the text to scale with the screen size. */
+            font-size: clamp(1.8rem, 2.8vw, 3.5rem);
+            /* Prevents text from becoming too small or too large */
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .left-content p {
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+            /* Prevents text from becoming too small or too large */
+            opacity: .88;
+            line-height: 1.5;
+        }
+
+        .right-panel {
+            /* This also takes up half the space of the parent container due to 'flex: 1'. */
+            flex: 1;
+            background: #fff;
+            /* Center its content vertically and horizontally using flexbox. */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /*
+        PADDING: Adds responsive spacing inside the right panel.
+      */
+            padding: 3rem;
+        }
+
+        .logo-top {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* LOGO SHADOW and sizing */
+        .logo-top img {
+            height: 100px;
+            /* filter: drop-shadow() is the best way to add a shadow to a transparent PNG */
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .form-container {
+            /*
+        WIDTH: The form container will try to take up 100% of the available width of its parent (the right panel).
+      */
+            width: 100%;
+            /* max-width prevents the form from becoming too wide on larger screens, improving readability. */
+            max-width: 330px;
+        }
+
+        .form-title {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #222;
+        }
+
+        .form-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            /* Makes the label take up its own line. */
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #222;
+            letter-spacing: 0.02em;
+        }
+
+        .form-group input {
+            /* WIDTH: Makes the input field span the full width of its parent (.form-group). */
+            width: 100%;
+            border: 1px solid #ececec;
+            border-radius: 8px;
+            background: #f8f8f8;
+            font-size: 1rem;
+            padding: 0.8rem 1rem;
+            color: #222;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            border-color: #1e3a8a;
+            outline: none;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            /* Adds space between the 'remember me' and 'forgot password' links */
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #222;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            margin-right: 7px;
+            accent-color: #1e3a8a;
+        }
+
+        .forgot-link {
+            font-size: 0.95rem;
+            color: #666;
+            text-decoration: none;
+            transition: color .17s;
+        }
+
+        .forgot-link:hover {
+            color: #111;
+        }
+
+        .btn-login {
+            /* WIDTH: Full width of the parent container. */
+            width: 100%;
+            padding: 0.9rem 0;
+            background: #111;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: background .18s;
+        }
+
+        .btn-login:hover {
+            background: #1e3a8a;
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 0.9rem 0;
+            background: #fff;
+            color: #222;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 9px;
+            border: 1px solid #ececec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: background .18s;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-google:hover {
+            background: #f2f2f2;
+        }
+
+        .signup-bottom {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .signup-bottom a {
+            color: #222;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+            transition: color .18s;
+        }
+
+        .signup-bottom a:hover {
+            color: #1e3a8a;
+        }
+
+        /*
+      Media queries apply styles only when certain conditions are met, like the screen width being below a certain size.
+      This is the foundation of responsive design. Breakpoints are often set in pixels (px) or ems to target specific device sizes.
+    */
+        @media(max-width: 768px) {
+            .split-container {
+                /* On smaller screens, stack the panels vertically instead of side-by-side. */
+                flex-direction: column;
+                width: 100%;
+                /* Take up more width on mobile */
+                max-width: 450px;
+                /* Constrain width on mobile for a single-column view */
+            }
+
+            .left-panel,
+            .right-panel {
+                /* Set a minimum height for the panels when they are stacked. */
+                min-height: 250px;
+                width: 100%;
+                /* Ensure panels take full width in the column layout. */
+            }
+
+            .left-panel {
+                padding: 2rem;
+            }
+
+            .right-panel {
+                padding: 2rem;
+            }
+
+            .left-content h1 {
+                font-size: 6vw;
+            }
+
+            .left-content p {
+                font-size: 2.5vw;
+            }
+        }
+
+        @media(max-width: 480px) {
+            body {
+                padding: 0;
+                /* Remove padding on very small screens to maximize space */
+            }
+
+            .split-container {
+                border-radius: 0;
+                /* Full screen on very small devices */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="split-container">
+        <div class="left-panel">
+            <div class="left-overlay"></div>
+            <div class="quote-top">Data Clarity Control</div>
+            <div class="left-content">
+                <h1>From Chaos to Clarity.</h1>
+                <p>All your student data, organized and accessible in one place.</p>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="logo-top">
+                <img src="./ERP-Photoroom.png" alt="Company Logo">
+            </div>
+            <form class="form-container">
+                <div class="form-title">Welcome Back</div>
+                <div class="form-subtitle">Enter your email and password to access your ERP Account</div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email" autocomplete="username" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password"
+                        autocomplete="current-password" required />
+                </div>
+                <div class="form-row">
+                    <label class="remember-me"><input type="checkbox" />Remember me</label>
+                    <a class="forgot-link" href="#">Forgot Password</a>
+                </div>
+                <button type="submit" class="btn-login">Sign In</button>
+            </form>
+            <div class="signup-bottom">
+                Don't have an account?<a href="#">Sign Up</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
