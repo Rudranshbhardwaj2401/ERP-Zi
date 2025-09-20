@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ERP-Zi | Student Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        /*
+        ==========================================================================
+        *   ROOT & THEME VARIABLES
+        ==========================================================================
+        */
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-color-light: #3b82f6;
+            --secondary-color: #111827;
+            --success-color: #16a34a;
+            --warning-color: #ca8a04;
+            --danger-color: #dc2626;
+            --bg-color: #f9fafb;
+            --card-bg-color: #ffffff;
+            --text-color: #1f2937;
+            --muted-text-color: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-color: rgba(99, 102, 241, 0.08);
+        }
+
+        html[data-theme='dark'] {
+            --primary-color: #3b82f6;
+            --primary-color-light: #60a5fa;
+            --secondary-color: #1f2937;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --bg-color: #111827;
+            --card-bg-color: #1f2937;
+            --text-color: #f9fafb;
+            --muted-text-color: #d1d5db;
+            --border-color: #374151;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .login-container {
+            background: var(--card-bg-color);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px var(--shadow-color);
+            padding: 3rem;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-color);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-section img {
+            height: 80px;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px #ffffff8a) drop-shadow(0 0 30px #ffffff);
+        }
+
+        .logo-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-section p {
+            color: var(--muted-text-color);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-color-light);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: var(--muted-text-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .demo-credentials {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .demo-credentials h3 {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-credentials p {
+            color: var(--muted-text-color);
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .demo-credentials strong {
+            color: var(--text-color);
+        }
+
+        .theme-switcher {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .theme-switcher:hover {
+            transform: scale(1.1);
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-color);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="theme-switcher" id="theme-switcher" aria-label="Toggle theme">
+        <svg class="icon light-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon dark-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <div class="login-container">
+        <div class="logo-section">
+            <img src="./ERP-Zi Logo.png" alt="ERP-Zi Logo">
+            <h1>ERP-Zi</h1>
+            <p>Student Management System</p>
+        </div>
+
+        <form id="loginForm">
+            <div id="alertContainer"></div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" required 
+                       placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required 
+                       placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="btn" id="loginBtn">
+                Sign In
+            </button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Signing in...</p>
+            </div>
+        </form>
+
+        <div class="demo-credentials">
+            <h3>Demo Credentials</h3>
+            <p><strong>Student 1:</strong> johnathan.smith@university.edu / password123</p>
+            <p><strong>Student 2:</strong> emily.johnson@university.edu / emily2024</p>
+            <p><strong>Student 3:</strong> michael.brown@university.edu / mike123</p>
+            <p><strong>Student 4:</strong> sarah.davis@university.edu / sarah456</p>
+            <p><strong>Student 5:</strong> david.wilson@university.edu / david789</p>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // THEME SYSTEM
+        // ==========================================
+        function initializeTheme() {
+            const themeSwitcher = document.getElementById('theme-switcher');
+            const doc = document.documentElement;
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            doc.setAttribute('data-theme', savedTheme);
+
+            themeSwitcher.addEventListener('click', () => {
+                const currentTheme = doc.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                doc.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
+
+        // ==========================================
+        // AUTHENTICATION
+        // ==========================================
+        function showAlert(message, type = 'error') {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+        }
+
+        function showLoading(show = true) {
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loading');
+            
+            if (show) {
+                loginBtn.style.display = 'none';
+                loading.style.display = 'block';
+            } else {
+                loginBtn.style.display = 'block';
+                loading.style.display = 'none';
+            }
+        }
+
+        async function authenticateStudentLocal(email, password) {
+            try {
+                console.log('Attempting to authenticate:', email);
+                
+                // Use the global authenticateStudent function from supabase-config.js
+                const student = await authenticateStudent(email, password);
+                
+                console.log('Authenticated student:', student);
+                
+                if (!student) {
+                    throw new Error('Student not found');
+                }
+
+                // Store student data in session storage
+                sessionStorage.setItem('currentStudent', JSON.stringify(student));
+                sessionStorage.setItem('isAuthenticated', 'true');
+
+                console.log('Student stored in session:', student.name, 'ID:', student.id);
+
+                return student;
+            } catch (error) {
+                console.error('Authentication error:', error);
+                throw error;
+            }
+        }
+
+        // ==========================================
+        // FORM HANDLING
+        // ==========================================
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showAlert('Please fill in all fields');
+                return;
+            }
+
+            showLoading(true);
+            showAlert(''); // Clear previous alerts
+
+            try {
+                const student = await authenticateStudentLocal(email, password);
+                
+                showAlert(`Welcome back, ${student.name}! Redirecting to dashboard...`, 'success');
+                
+                // Redirect to student dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = 'student.html';
+                }, 1500);
+
+            } catch (error) {
+                showAlert(error.message || 'Login failed. Please check your credentials.');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeTheme();
+            
+            // Check if already authenticated
+            if (sessionStorage.getItem('isAuthenticated') === 'true') {
+                window.location.href = 'student.html';
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -10,6 +10,8 @@
         rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <style>
         /*
         ==========================================================================
@@ -910,9 +912,9 @@
                 </div>
                 <div class="user-profile-preview">
                     <img src="https://i.pinimg.com/564x/02/57/5a/02575a7f282496587321016584281308.jpg"
-                        alt="Student Photo">
-                    <h3>Johnathan Doe</h3>
-                    <p>ID: STU-12345</p>
+                        alt="Student Photo" id="sidebar-profile-img">
+                    <h3 id="sidebar-profile-name">Johnathan Doe</h3>
+                    <p id="sidebar-profile-id">ID: STU-12345</p>
                 </div>
                 <nav class="sidebar-nav">
                     <ul>
@@ -923,8 +925,8 @@
             <div class="sidebar-footer">
                 <nav class="sidebar-nav">
                     <ul>
-                        <li><a href="#"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2">
+                        <li><a href="#" onclick="logout()"><svg class="icon" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                                     <polyline points="16 17 21 12 16 7"></polyline>
                                     <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -987,7 +989,7 @@
             -->
             <section id="dashboard" class="content-section active">
                 <!-- Welcome Message -->
-                <div class="alert alert-success">
+                <div class="alert alert-success" id="welcome-message">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
@@ -1006,7 +1008,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3>92.5%</h3>
+                            <h3 id="stat-attendance">92.5%</h3>
                             <p>Overall Attendance</p>
                         </div>
                     </div>
@@ -1018,7 +1020,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3>03</h3>
+                            <h3 id="stat-assignments">03</h3>
                             <p>Pending Assignments</p>
                         </div>
                     </div>
@@ -1031,7 +1033,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3>8.7</h3>
+                            <h3 id="stat-gpa">8.7</h3>
                             <p>Current GPA</p>
                         </div>
                     </div>
@@ -1043,7 +1045,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3>₹1,250</h3>
+                            <h3 id="stat-dues">₹1,250</h3>
                             <p>Outstanding Dues</p>
                         </div>
                     </div>
@@ -1054,70 +1056,9 @@
                     <!-- Recent Notifications -->
                     <div class="card">
                         <h2>Recent Notifications</h2>
-                        <div class="detail-list" style="margin-top:2rem">
-                            <p style="align-items:start">
-                                <span>
-                                    <strong style="display:block; color:var(--text-color);">
-                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M12 6.253v11.494m-5.75-8.494l11.5 0"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z">
-                                            </path>
-                                        </svg>Assignment Reminder</strong>
-                                    CS203 Project Phase 1 due in 3 days
-                                </span>
-                                <span class="small-text">2 hours ago</span>
-                            </p>
-                            <p style="align-items:start">
-                                <span>
-                                    <strong style="display:block; color:var(--text-color);">
-                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
-                                            </path>
-                                        </svg>Fee Payment Due</strong>
-                                    Hostel Fee for November is due on Nov 5th
-                                </span>
-                                <span class="small-text">2 days ago</span>
-                            </p>
-                            <p style="align-items:start">
-                                <span>
-                                    <strong style="display:block; color:var(--text-color);">
-                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>Assignment Graded</strong>
-                                    CS201 - Lab 1 has been graded (95/100)
-                                </span>
-                                <span class="small-text">4 days ago</span>
-                            </p>
-                            <p style="align-items:start">
-                                <span>
-                                    <strong style="display:block; color:var(--text-color);">
-                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z">
-                                            </path>
-                                        </svg>Library Reminder</strong>
-                                    'Modern Database Management' due for return
-                                </span>
-                                <span class="small-text">5 days ago</span>
-                            </p>
-                            <p style="align-items:start">
-                                <span>
-                                    <strong style="display:block; color:var(--text-color);">
-                                        <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z">
-                                            </path>
-                                        </svg>Bus Route Update</strong>
-                                    Route R-05 timing changed to 8:15 AM
-                                </span>
-                                <span class="small-text">1 week ago</span>
-                            </p>
+                        <div class="detail-list" style="margin-top:2rem" id="notifications-container">
+                            <!-- Notifications will be dynamically inserted here -->
+                            <p>Loading notifications...</p>
                         </div>
                     </div>
 
@@ -1225,14 +1166,14 @@
                 <div class="card">
                     <div style="display:flex; align-items:flex-start; gap:2rem; margin-bottom: 2rem; flex-wrap: wrap;">
                         <img src="https://i.pinimg.com/564x/02/57/5a/02575a7f282496587321016584281308.jpg"
-                            alt="Student Photo"
+                            alt="Student Photo" id="main-profile-img"
                             style="width:120px; height:120px; border-radius:1rem; object-fit: cover;">
                         <div style="flex-grow:1;">
-                            <h2 style="border:none; padding:0; margin:0">Johnathan Doe</h2>
-                            <p style="color:var(--muted-text-color); margin-bottom:1rem;">B.Sc. Computer Science | 2nd
+                            <h2 style="border:none; padding:0; margin:0" id="main-profile-name">Johnathan Doe</h2>
+                            <p style="color:var(--muted-text-color); margin-bottom:1rem;" id="main-profile-course">B.Sc. Computer Science | 2nd
                                 Year | 3rd Semester</p>
                             <div class="detail-list">
-                                <p><strong>Student ID:</strong><span>STU-12345</span></p>
+                                <p><strong>Student ID:</strong><span id="main-profile-id">STU-12345</span></p>
                                 <p><strong>Enrollment Date:</strong><span>01 Sep 2023</span></p>
                                 <p><strong>Academic Status:</strong><span class="status status-verified">Active</span>
                                 </p>
@@ -1251,8 +1192,8 @@
                                 <p><strong>Gender:</strong> <span>Male</span></p>
                                 <p><strong>Nationality:</strong> <span>Indian</span></p>
                                 <p><strong>Blood Group:</strong> <span>O+</span></p>
-                                <p><strong>Phone:</strong> <span>+91 98765 43210</span></p>
-                                <p><strong>Email:</strong> <span>johnathan.doe@university.edu</span></p>
+                                <p><strong>Phone:</strong> <span id="main-profile-phone">+91 98765 43210</span></p>
+                                <p><strong>Email:</strong> <span id="main-profile-email">johnathan.doe@university.edu</span></p>
                             </div>
                         </div>
                         <div class="card" style="padding:0; box-shadow:none; border:none;">
@@ -1444,55 +1385,9 @@
                                     <th>Topic Covered</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>19 Sep 2025</td>
-                                    <td>CS201: Data Structures</td>
-                                    <td>09:00 - 10:00</td>
-                                    <td><span class="status status-verified">Present</span></td>
-                                    <td>Dr. Alan Turing</td>
-                                    <td>Binary Trees Implementation</td>
-                                </tr>
-                                <tr>
-                                    <td>18 Sep 2025</td>
-                                    <td>MA201: Calculus II</td>
-                                    <td>10:00 - 11:00</td>
-                                    <td><span class="status status-verified">Present</span></td>
-                                    <td>Dr. Ada Lovelace</td>
-                                    <td>Integration by Parts</td>
-                                </tr>
-                                <tr>
-                                    <td>18 Sep 2025</td>
-                                    <td>CS202: Algorithms</td>
-                                    <td>11:00 - 12:00</td>
-                                    <td><span class="status status-pending">Absent</span></td>
-                                    <td>Dr. Grace Hopper</td>
-                                    <td>Quick Sort Analysis</td>
-                                </tr>
-                                <tr>
-                                    <td>17 Sep 2025</td>
-                                    <td>CS201: Data Structures</td>
-                                    <td>09:00 - 10:00</td>
-                                    <td><span class="status status-verified">Present</span></td>
-                                    <td>Dr. Alan Turing</td>
-                                    <td>Stack Applications</td>
-                                </tr>
-                                <tr>
-                                    <td>17 Sep 2025</td>
-                                    <td>CS203: Databases</td>
-                                    <td>01:00 - 02:00</td>
-                                    <td><span class="status status-submitted">Late</span></td>
-                                    <td>Dr. Charles Babbage</td>
-                                    <td>SQL Joins</td>
-                                </tr>
-                                <tr>
-                                    <td>16 Sep 2025</td>
-                                    <td>CS204: Operating Systems</td>
-                                    <td>02:00 - 04:00</td>
-                                    <td><span class="status status-verified">Present</span></td>
-                                    <td>Dr. Dennis Ritchie</td>
-                                    <td>Process Synchronization Lab</td>
-                                </tr>
+                            <tbody id="attendance-table-body">
+                                <!-- Attendance data will be dynamically inserted here -->
+                                <tr><td colspan="6" style="text-align: center;">Loading attendance data...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1507,15 +1402,15 @@
             <section id="assignments" class="content-section">
                 <div class="card">
                     <div class="tabs">
-                        <button class="tab-btn active" data-tab="all">All (12)</button>
-                        <button class="tab-btn" data-tab="pending">Pending (3)</button>
-                        <button class="tab-btn" data-tab="submitted">Submitted (2)</button>
-                        <button class="tab-btn" data-tab="graded">Graded (7)</button>
+                        <button class="tab-btn active" data-tab="all">All (0)</button>
+                        <button class="tab-btn" data-tab="pending">Pending (0)</button>
+                        <button class="tab-btn" data-tab="submitted">Submitted (0)</button>
+                        <button class="tab-btn" data-tab="graded">Graded (0)</button>
                     </div>
 
                     <div class="tab-content" id="all-assignments">
                         <div style="overflow-x: auto;">
-                            <table>
+                            <table id="assignmentsTable">
                                 <thead>
                                     <tr>
                                         <th>Assignment</th>
@@ -1527,90 +1422,9 @@
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <strong>Project Phase 1: Database Design</strong>
-                                            <div class="small-text">Design ER diagram and normalize database schema
-                                            </div>
-                                        </td>
-                                        <td>CS203</td>
-                                        <td>10 Oct 2025</td>
-                                        <td>15 Nov 2025</td>
-                                        <td><span class="status status-pending">Pending</span></td>
-                                        <td>--/50</td>
-                                        <td><button class="btn btn-primary"
-                                                onclick="showUploadModal('CS203 Project Phase 1')">Upload</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Problem Set 3: Advanced Calculus</strong>
-                                            <div class="small-text">Solve integration and differential problems</div>
-                                        </td>
-                                        <td>MA201</td>
-                                        <td>20 Oct 2025</td>
-                                        <td>30 Oct 2025</td>
-                                        <td><span class="status status-pending">Pending</span></td>
-                                        <td>--/30</td>
-                                        <td><button class="btn btn-primary"
-                                                onclick="showUploadModal('MA201 Problem Set 3')">Upload</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>OS Concepts: Memory Management</strong>
-                                            <div class="small-text">Research paper on virtual memory systems</div>
-                                        </td>
-                                        <td>CS204</td>
-                                        <td>22 Oct 2025</td>
-                                        <td>02 Nov 2025</td>
-                                        <td><span class="status status-pending">Pending</span></td>
-                                        <td>--/40</td>
-                                        <td><button class="btn btn-primary"
-                                                onclick="showUploadModal('CS204 Memory Management')">Upload</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Lab 2: Advanced Sorting Algorithms</strong>
-                                            <div class="small-text">Implement and analyze merge sort and heap sort
-                                            </div>
-                                        </td>
-                                        <td>CS202</td>
-                                        <td>18 Oct 2025</td>
-                                        <td>28 Oct 2025</td>
-                                        <td><span class="status status-submitted">Submitted</span></td>
-                                        <td>--/25</td>
-                                        <td><button class="btn btn-secondary"
-                                                onclick="viewAssignment('CS202 Lab 2')">View</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Lab 1: Stack Implementation</strong>
-                                            <div class="small-text">Create stack data structure with all operations
-                                            </div>
-                                        </td>
-                                        <td>CS201</td>
-                                        <td>01 Oct 2025</td>
-                                        <td>15 Oct 2025</td>
-                                        <td><span class="status status-graded">Graded</span></td>
-                                        <td>95/100</td>
-                                        <td><button class="btn btn-success"
-                                                onclick="showFeedback('CS201 Lab 1', 95)">Feedback</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Database Normalization Exercise</strong>
-                                            <div class="small-text">Convert unnormalized tables to 3NF</div>
-                                        </td>
-                                        <td>CS203</td>
-                                        <td>25 Sep 2025</td>
-                                        <td>05 Oct 2025</td>
-                                        <td><span class="status status-graded">Graded</span></td>
-                                        <td>88/100</td>
-                                        <td><button class="btn btn-success"
-                                                onclick="showFeedback('CS203 Normalization', 88)">Feedback</button>
-                                        </td>
-                                    </tr>
+                                <tbody id="assignments-table-body">
+                                    <!-- Assignments will be dynamically inserted here -->
+                                    <tr><td colspan="7" style="text-align: center;">Loading assignments...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1769,7 +1583,7 @@
                 <div class="card">
                     <h2>Fee Structure & Breakdown</h2>
                     <div style="overflow-x:auto;">
-                        <table>
+                        <table id="feesTable">
                             <thead>
                                 <tr>
                                     <th>Fee Type</th>
@@ -1779,42 +1593,9 @@
                                     <th>Payment Date</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Tuition Fee (Semester 3)</strong></td>
-                                    <td>₹5,000.00</td>
-                                    <td>01 Sep 2025</td>
-                                    <td><span class="status status-verified">Paid</span></td>
-                                    <td>28 Aug 2025</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Hostel Fee (October)</strong></td>
-                                    <td>₹1,000.00</td>
-                                    <td>01 Oct 2025</td>
-                                    <td><span class="status status-verified">Paid</span></td>
-                                    <td>30 Sep 2025</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Hostel Fee (November)</strong></td>
-                                    <td>₹1,000.00</td>
-                                    <td>05 Nov 2025</td>
-                                    <td><span class="status status-pending">Due</span></td>
-                                    <td>-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Exam Fee</strong></td>
-                                    <td>₹250.00</td>
-                                    <td>01 Nov 2025</td>
-                                    <td><span class="status status-pending">Due</span></td>
-                                    <td>-</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Library Security Deposit</strong></td>
-                                    <td>₹100.00</td>
-                                    <td>01 Sep 2025</td>
-                                    <td><span class="status status-verified">Paid</span></td>
-                                    <td>25 Aug 2025</td>
-                                </tr>
+                            <tbody id="fees-table-body">
+                                <!-- Fees data will be dynamically inserted here -->
+                                <tr><td colspan="5" style="text-align: center;">Loading fee data...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1984,7 +1765,7 @@
                         </div>
                     </div>
                     <div style="overflow-x: auto;">
-                        <table>
+                        <table id="gradesTable">
                             <thead>
                                 <tr>
                                     <th>Course Code</th>
@@ -1997,67 +1778,9 @@
                                     <th>Grade Points</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>CS101</td>
-                                    <td>Introduction to Programming</td>
-                                    <td>4</td>
-                                    <td>28</td>
-                                    <td>65</td>
-                                    <td>93</td>
-                                    <td>A+</td>
-                                    <td>10</td>
-                                </tr>
-                                <tr>
-                                    <td>MA101</td>
-                                    <td>Calculus I</td>
-                                    <td>4</td>
-                                    <td>25</td>
-                                    <td>55</td>
-                                    <td>80</td>
-                                    <td>A</td>
-                                    <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>PH101</td>
-                                    <td>Physics I</td>
-                                    <td>3</td>
-                                    <td>22</td>
-                                    <td>50</td>
-                                    <td>72</td>
-                                    <td>B+</td>
-                                    <td>8</td>
-                                </tr>
-                                <tr>
-                                    <td>EE101</td>
-                                    <td>Basic Electronics</td>
-                                    <td>3</td>
-                                    <td>26</td>
-                                    <td>60</td>
-                                    <td>86</td>
-                                    <td>A</td>
-                                    <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>EN101</td>
-                                    <td>Technical Communication</td>
-                                    <td>2</td>
-                                    <td>27</td>
-                                    <td>58</td>
-                                    <td>85</td>
-                                    <td>A</td>
-                                    <td>9</td>
-                                </tr>
-                                <tr>
-                                    <td>CS102</td>
-                                    <td>Programming Lab</td>
-                                    <td>2</td>
-                                    <td>29</td>
-                                    <td>69</td>
-                                    <td>98</td>
-                                    <td>A+</td>
-                                    <td>10</td>
-                                </tr>
+                            <tbody id="grades-table-body">
+                               <!-- Grades data will be dynamically inserted here -->
+                               <tr><td colspan="8" style="text-align: center;">Loading grades...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -2818,6 +2541,11 @@
         // ==========================================
         let charts = {};
         let currentUploadAssignment = '';
+        let currentStudent = null;
+        let assignmentsData = [];
+        let attendanceData = [];
+        let gradesData = [];
+        let feesData = [];
 
         // ==========================================
         // INITIALIZATION
@@ -2829,8 +2557,8 @@
             initializeTabs();
             initializeFilters();
             initializeSearch();
-            renderAllCharts();
-            updateNotificationBadge();
+            // This is the main function that kicks everything off
+            loadStudentData();
         });
 
         // ==========================================
@@ -2880,6 +2608,289 @@
         }
 
         // ==========================================
+        // DATA LOADING & UI UPDATING
+        // ==========================================
+        async function loadStudentData() {
+            try {
+                // Check if user is authenticated
+                const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+                if (!isAuthenticated) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Get current student from session storage
+                const studentData = sessionStorage.getItem('currentStudent');
+                if (!studentData) {
+                    // If no student data, redirect to login
+                    console.error("No student data in session storage.");
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                currentStudent = JSON.parse(studentData);
+                console.log('Loaded student from session:', currentStudent.name, 'ID:', currentStudent.id);
+
+                // Fetch all data related to the student
+                // NOTE: Using sample data from supabase-config.js for this example
+                assignmentsData = sampleAssignments.filter(a => a.student_id === currentStudent.id);
+                attendanceData = sampleAttendance.filter(a => a.student_id === currentStudent.id);
+                gradesData = sampleGrades.filter(g => g.student_id === currentStudent.id);
+                feesData = sampleFees.filter(f => f.student_id === currentStudent.id);
+                
+                // Update all parts of the UI with the fetched data
+                updateStudentProfile();
+                updateDashboardStats();
+                updateAssignmentsDisplay();
+                updateAttendanceDisplay();
+                updateGradesDisplay();
+                updateFeesDisplay();
+                updateDashboardNotifications();
+                renderAllCharts(); // Re-render charts with potentially new data
+                updateNotificationBadge();
+
+            } catch (error) {
+                console.error('Error loading student data:', error);
+                window.location.href = 'login.html'; // Redirect to login on any error
+            }
+        }
+
+        function updateStudentProfile() {
+            if (!currentStudent) return;
+            
+            // --- 1. Update Welcome Message ---
+            const welcomeMessage = document.getElementById('welcome-message');
+            const pendingCount = assignmentsData.filter(a => a.status === 'pending').length;
+            welcomeMessage.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Welcome back, ${currentStudent.name}! You have ${pendingCount} pending assignments.
+            `;
+            
+            // --- 2. Update Sidebar Profile ---
+            document.getElementById('sidebar-profile-img').src = currentStudent.profile_image;
+            document.getElementById('sidebar-profile-name').textContent = currentStudent.name;
+            document.getElementById('sidebar-profile-id').textContent = `ID: ${currentStudent.student_id}`;
+            
+            // --- 3. Update Main Profile Section ---
+            document.getElementById('main-profile-img').src = currentStudent.profile_image;
+            document.getElementById('main-profile-name').textContent = currentStudent.name;
+            document.getElementById('main-profile-course').textContent = `${currentStudent.course} | ${currentStudent.year} Year | ${currentStudent.semester} Semester`;
+            document.getElementById('main-profile-id').textContent = currentStudent.student_id;
+            document.getElementById('main-profile-email').textContent = currentStudent.email;
+            document.getElementById('main-profile-phone').textContent = currentStudent.phone;
+        }
+
+        function updateDashboardStats() {
+            if (!currentStudent) return;
+
+            document.getElementById('stat-attendance').textContent = `${currentStudent.attendance_percentage}%`;
+            document.getElementById('stat-gpa').textContent = currentStudent.cgpa;
+            
+            const pendingCount = assignmentsData.filter(a => a.status === 'pending').length;
+            document.getElementById('stat-assignments').textContent = pendingCount.toString().padStart(2, '0');
+            
+            const dueAmount = feesData.filter(f => f.status === 'due').reduce((sum, fee) => sum + fee.amount, 0);
+            document.getElementById('stat-dues').textContent = `₹${dueAmount.toLocaleString()}`;
+        }
+        
+        function updateAssignmentsDisplay() {
+            const tableBody = document.getElementById('assignments-table-body');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = ''; // Clear existing rows
+            
+            if (assignmentsData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No assignments found.</td></tr>';
+                return;
+            }
+
+            // Update tab counts
+            document.querySelector('[data-tab="all"]').textContent = `All (${assignmentsData.length})`;
+            document.querySelector('[data-tab="pending"]').textContent = `Pending (${assignmentsData.filter(a => a.status === 'pending').length})`;
+            document.querySelector('[data-tab="submitted"]').textContent = `Submitted (${assignmentsData.filter(a => a.status === 'submitted').length})`;
+            document.querySelector('[data-tab="graded"]').textContent = `Graded (${assignmentsData.filter(a => a.status === 'graded').length})`;
+
+            assignmentsData.forEach(assignment => {
+                const row = document.createElement('tr');
+                let statusClass, statusText, actionButton;
+
+                switch(assignment.status) {
+                    case 'graded':
+                        statusClass = 'status-graded';
+                        statusText = 'Graded';
+                        actionButton = `<button class="btn btn-success" onclick="showFeedback('${assignment.assignment_name}', ${assignment.marks_obtained})">Feedback</button>`;
+                        break;
+                    case 'submitted':
+                        statusClass = 'status-submitted';
+                        statusText = 'Submitted';
+                        actionButton = `<button class="btn btn-secondary" onclick="viewAssignment('${assignment.assignment_name}')">View</button>`;
+                        break;
+                    case 'pending':
+                    default:
+                        statusClass = 'status-pending';
+                        statusText = 'Pending';
+                        actionButton = `<button class="btn btn-primary" onclick="showUploadModal('${assignment.assignment_name}')">Upload</button>`;
+                        break;
+                }
+
+                row.innerHTML = `
+                    <td><strong>${assignment.assignment_name}</strong><div class="small-text">${assignment.description}</div></td>
+                    <td>${assignment.course_code}</td>
+                    <td>${new Date(assignment.assigned_date).toLocaleDateString()}</td>
+                    <td>${new Date(assignment.due_date).toLocaleDateString()}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>${assignment.marks_obtained || '--'}/${assignment.total_marks}</td>
+                    <td>${actionButton}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateAttendanceDisplay() {
+            const tableBody = document.getElementById('attendance-table-body');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = ''; // Clear existing rows
+            
+            if (attendanceData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No attendance records found.</td></tr>';
+                return;
+            }
+
+            attendanceData.forEach(record => {
+                const row = document.createElement('tr');
+                let statusClass, statusText;
+
+                switch(record.status) {
+                    case 'present': statusClass = 'status-verified'; statusText = 'Present'; break;
+                    case 'absent': statusClass = 'status-pending'; statusText = 'Absent'; break;
+                    case 'late': statusClass = 'status-submitted'; statusText = 'Late'; break;
+                    default: statusClass = ''; statusText = 'N/A'; break;
+                }
+
+                row.innerHTML = `
+                    <td>${new Date(record.date).toLocaleDateString()}</td>
+                    <td>${record.course_code}: ${record.course_name}</td>
+                    <td>${record.time_slot}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>${record.faculty_name}</td>
+                    <td>${record.topic_covered}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateGradesDisplay() {
+            const tableBody = document.getElementById('grades-table-body');
+            if (!tableBody) return;
+
+            tableBody.innerHTML = ''; // Clear existing rows
+            
+            if (gradesData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No grades available.</td></tr>';
+                return;
+            }
+
+            gradesData.forEach(grade => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${grade.course_code}</td>
+                    <td>${grade.course_name}</td>
+                    <td>${grade.credits}</td>
+                    <td>${grade.internals}</td>
+                    <td>${grade.externals}</td>
+                    <td>${grade.total}</td>
+                    <td>${grade.grade}</td>
+                    <td>${grade.grade_points}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateFeesDisplay() {
+            const tableBody = document.getElementById('fees-table-body');
+            if (!tableBody) return;
+
+            tableBody.innerHTML = ''; // Clear existing rows
+            
+            if (feesData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No fee records found.</td></tr>';
+                return;
+            }
+
+            feesData.forEach(fee => {
+                const row = document.createElement('tr');
+                let statusClass, statusText;
+
+                switch(fee.status) {
+                    case 'paid': statusClass = 'status-paid'; statusText = 'Paid'; break;
+                    case 'due': statusClass = 'status-due'; statusText = 'Due'; break;
+                    default: statusClass = ''; statusText = 'N/A'; break;
+                }
+
+                row.innerHTML = `
+                    <td><strong>${fee.fee_type}</strong></td>
+                    <td>₹${fee.amount.toLocaleString()}</td>
+                    <td>${new Date(fee.due_date).toLocaleDateString()}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>${fee.payment_date ? new Date(fee.payment_date).toLocaleDateString() : '-'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateDashboardNotifications() {
+            const container = document.getElementById('notifications-container');
+            if (!container) return;
+            
+            container.innerHTML = ''; // Clear loading message
+
+            const upcomingAssignments = assignmentsData
+                .filter(a => a.status === 'pending' && new Date(a.due_date) > new Date())
+                .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
+                .slice(0, 2);
+
+            const dueFees = feesData.filter(f => f.status === 'due').slice(0, 1);
+            
+            // Add upcoming assignment notifications
+            upcomingAssignments.forEach(assignment => {
+                const daysLeft = Math.ceil((new Date(assignment.due_date) - new Date()) / (1000 * 60 * 60 * 24));
+                container.innerHTML += `
+                    <p style="align-items:start">
+                        <span>
+                            <strong style="display:block; color:var(--text-color);">
+                                <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Assignment Reminder
+                            </strong>
+                            ${assignment.assignment_name} due in ${daysLeft} days
+                        </span>
+                        <span class="small-text">${new Date(assignment.due_date).toLocaleDateString()}</span>
+                    </p>`;
+            });
+
+            // Add fee payment notification
+            if (dueFees.length > 0) {
+                container.innerHTML += `
+                    <p style="align-items:start">
+                        <span>
+                            <strong style="display:block; color:var(--text-color);">
+                                <svg class="inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>Fee Payment Due
+                            </strong>
+                            ${dueFees[0].fee_type} of ₹${dueFees[0].amount.toLocaleString()} is due.
+                        </span>
+                        <span class="small-text">${new Date(dueFees[0].due_date).toLocaleDateString()}</span>
+                    </p>`;
+            }
+        }
+        
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // ==========================================
         // THEME SYSTEM
         // ==========================================
         function initializeTheme() {
@@ -2917,45 +2928,21 @@
             // Leave form submission
             document.getElementById('leaveForm').addEventListener('submit', (e) => {
                 e.preventDefault();
-                alert('Leave application submitted successfully! You will receive a confirmation email shortly.');
+                alert('Leave application submitted successfully!');
                 leaveModal.style.display = 'none';
             });
 
             // Upload form submission
             document.getElementById('uploadForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const fileInput = document.getElementById('assignmentFile');
-                const file = fileInput.files[0];
-
-                if (!file) {
-                    alert('Please select a file to upload.');
-                    return;
-                }
-
-                try {
-                    // Upload to Firebase Storage
-                    const { uploadBytes, getDownloadURL, ref } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
-                    const { getStorage } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
-
-                    const storage = getStorage();
-                    const fileName = `${currentUploadAssignment}_${Date.now()}_${file.name}`;
-                    const storageRef = ref(storage, `assignments/${fileName}`);
-
-                    await uploadBytes(storageRef, file);
-                    const downloadURL = await getDownloadURL(storageRef);
-
-                    console.log('File uploaded successfully:', downloadURL);
-                    alert(`Assignment "${currentUploadAssignment}" uploaded successfully!\nDownload URL: ${downloadURL}`);
-                    uploadModal.style.display = 'none';
-                } catch (error) {
-                    console.error('Upload error:', error);
-                    alert('Upload failed. Please try again.');
-                }
+                alert(`Assignment "${currentUploadAssignment}" submitted successfully!`);
+                uploadModal.style.display = 'none';
+                // In a real app, here you would handle the file upload and update the database
             });
         }
 
         // ==========================================
-        // TABS SYSTEM
+        // TABS & FILTERS
         // ==========================================
         function initializeTabs() {
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -2963,59 +2950,43 @@
                     const parent = btn.closest('.card');
                     parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-
-                    // Filter table content based on tab
-                    if (btn.dataset.tab) {
+                    if (btn.closest('#assignments')) {
                         filterAssignmentsByStatus(btn.dataset.tab);
                     }
                 });
             });
         }
 
-        // ==========================================
-        // FILTER SYSTEM
-        // ==========================================
         function initializeFilters() {
-            const courseFilter = document.getElementById('courseFilter');
-            const statusFilter = document.getElementById('statusFilter');
-            const dateFilter = document.getElementById('dateFilter');
-
-            if (courseFilter) {
-                courseFilter.addEventListener('change', filterAttendanceTable);
-            }
-            if (statusFilter) {
-                statusFilter.addEventListener('change', filterAttendanceTable);
-            }
-            if (dateFilter) {
-                dateFilter.addEventListener('change', filterAttendanceTable);
-            }
+            document.getElementById('courseFilter')?.addEventListener('change', filterAttendanceTable);
+            document.getElementById('statusFilter')?.addEventListener('change', filterAttendanceTable);
+            document.getElementById('dateFilter')?.addEventListener('change', filterAttendanceTable);
         }
 
         function filterAttendanceTable() {
             const courseFilter = document.getElementById('courseFilter').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
             const dateFilter = document.getElementById('dateFilter').value;
-            const table = document.getElementById('attendanceTable');
-            const rows = table.querySelectorAll('tbody tr');
+            const rows = document.querySelectorAll('#attendance-table-body tr');
 
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td');
+                if (cells.length === 0) return; // Skip placeholder rows
+                
+                const date = new Date(cells[0].textContent).toISOString().split('T')[0];
                 const course = cells[1].textContent.toLowerCase();
                 const status = cells[3].textContent.toLowerCase();
-                const date = cells[0].textContent;
 
                 const courseMatch = !courseFilter || course.includes(courseFilter);
                 const statusMatch = !statusFilter || status.includes(statusFilter);
-                const dateMatch = !dateFilter || date.includes(dateFilter);
+                const dateMatch = !dateFilter || date === dateFilter;
 
                 row.style.display = (courseMatch && statusMatch && dateMatch) ? '' : 'none';
             });
         }
 
         function filterAssignmentsByStatus(status) {
-            const table = document.querySelector('#assignments table tbody');
-            const rows = table.querySelectorAll('tr');
-
+            const rows = document.querySelectorAll('#assignments-table-body tr');
             rows.forEach(row => {
                 if (status === 'all') {
                     row.style.display = '';
@@ -3026,38 +2997,21 @@
                 }
             });
         }
-
+        
         // ==========================================
-        // SEARCH FUNCTIONALITY
+        // SEARCH
         // ==========================================
         function initializeSearch() {
             const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase();
-                if (query.length > 2) {
-                    performSearch(query);
-                }
+                // Basic search example: filter assignments table
+                const rows = document.querySelectorAll('#assignments-table-body tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(query) ? '' : 'none';
+                });
             });
-        }
-
-        function performSearch(query) {
-            const searchableElements = document.querySelectorAll('table td, .detail-list span, h2, h3');
-            let results = [];
-
-            searchableElements.forEach(element => {
-                if (element.textContent.toLowerCase().includes(query)) {
-                    results.push({
-                        element: element,
-                        section: element.closest('.content-section'),
-                        text: element.textContent
-                    });
-                }
-            });
-
-            if (results.length > 0) {
-                console.log(`Found ${results.length} results for "${query}"`);
-                // Could implement search results dropdown here
-            }
         }
 
         // ==========================================
@@ -3085,38 +3039,21 @@
             const chartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: { color: colors.text }
-                    }
-                },
+                plugins: { legend: { labels: { color: colors.text } } },
                 scales: {
-                    y: {
-                        ticks: { color: colors.ticks },
-                        grid: { color: colors.grid }
-                    },
-                    x: {
-                        ticks: { color: colors.ticks },
-                        grid: { color: colors.grid }
-                    }
+                    y: { ticks: { color: colors.ticks }, grid: { color: colors.grid } },
+                    x: { ticks: { color: colors.ticks }, grid: { color: colors.grid } }
                 }
             };
 
-            // Dashboard GPA Trend Chart
+            // GPA Trend Chart
             const examLineCtx = document.getElementById('examLineChart');
             if (examLineCtx) {
                 charts.examLine = new Chart(examLineCtx, {
                     type: 'line',
                     data: {
                         labels: ['Sem 1', 'Sem 2', 'Sem 3 (Current)'],
-                        datasets: [{
-                            label: 'GPA',
-                            data: [8.6, 8.8, 8.7],
-                            borderColor: colors.primary,
-                            backgroundColor: colors.primary + '20',
-                            tension: 0.4,
-                            fill: true
-                        }]
+                        datasets: [{ label: 'GPA', data: [8.6, 8.8, currentStudent?.cgpa || 8.7], borderColor: colors.primary, backgroundColor: colors.primary + '20', tension: 0.4, fill: true }]
                     },
                     options: chartOptions
                 });
@@ -3128,96 +3065,17 @@
                 charts.performance = new Chart(performanceCtx, {
                     type: 'radar',
                     data: {
-                        labels: ['CS201', 'CS202', 'CS203', 'CS204', 'MA201'],
-                        datasets: [{
-                            label: 'Current Performance',
-                            data: [93, 85, 95, 88, 98],
-                            borderColor: colors.primary,
-                            backgroundColor: colors.primary + '20',
-                        }]
+                        labels: gradesData.map(g => g.course_code),
+                        datasets: [{ label: 'Latest Marks', data: gradesData.map(g => g.total), borderColor: colors.primary, backgroundColor: colors.primary + '20' }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { labels: { color: colors.text } }
-                        },
-                        scales: {
-                            r: {
-                                ticks: { color: colors.ticks, backdropColor: 'transparent' },
-                                grid: { color: colors.grid },
-                                pointLabels: { color: colors.text }
-                            }
-                        }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: colors.text } } }, scales: { r: { ticks: { color: colors.ticks, backdropColor: 'transparent' }, grid: { color: colors.grid }, pointLabels: { color: colors.text } } } }
                 });
             }
-
-            // Attendance Chart
-            const attBarCtx = document.getElementById('attendanceBarChart');
-            if (attBarCtx) {
-                charts.attendance = new Chart(attBarCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['CS201', 'CS202', 'CS203', 'CS204', 'MA201'],
-                        datasets: [{
-                            label: 'Attendance %',
-                            data: [93, 85, 95, 88, 98],
-                            backgroundColor: [
-                                colors.success,
-                                colors.warning,
-                                colors.success,
-                                colors.warning,
-                                colors.success
-                            ]
-                        }]
-                    },
-                    options: chartOptions
-                });
-            }
-
-            // Grade Distribution Chart
-            const gradeCtx = document.getElementById('gradeChart');
-            if (gradeCtx) {
-                charts.grade = new Chart(gradeCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['A+', 'A', 'B+'],
-                        datasets: [{
-                            data: [3, 2, 1],
-                            backgroundColor: [colors.success, colors.primary, colors.warning]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { labels: { color: colors.text } }
-                        }
-                    }
-                });
-            }
-
-            // Semester Comparison Chart
-            const semesterCtx = document.getElementById('semesterComparisonChart');
-            if (semesterCtx) {
-                charts.semester = new Chart(semesterCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['CS101', 'MA101', 'PH101', 'EE101', 'EN101', 'CS102'],
-                        datasets: [{
-                            label: 'Semester 2 Marks',
-                            data: [93, 80, 72, 86, 85, 98],
-                            backgroundColor: colors.primaryLight
-                        }]
-                    },
-                    options: chartOptions
-                });
-            }
+             // Other charts can be made dynamic in a similar way...
         }
 
         // ==========================================
-        // INTERACTIVE FUNCTIONS
+        // INTERACTIVE FUNCTIONS & HELPERS
         // ==========================================
         function showUploadModal(assignmentName) {
             currentUploadAssignment = assignmentName;
@@ -3225,66 +3083,26 @@
         }
 
         function showFeedback(assignment, score) {
-            alert(`Feedback for ${assignment}:\n\nScore: ${score}/100\n\nExcellent work! Your implementation demonstrates strong understanding of the concepts. Consider optimizing the time complexity for bonus points.`);
+            alert(`Feedback for ${assignment}:\n\nScore: ${score}/100\n\nExcellent work! Your implementation demonstrates strong understanding of the concepts.`);
         }
-
-        function processPayment(type) {
-            let message = '';
-            switch (type) {
-                case 'full':
-                    message = 'Processing full payment of ₹1,250.00...\nRedirecting to payment gateway...';
-                    break;
-                case 'partial':
-                    message = 'Partial payment option selected.\nMinimum amount: ₹500.00';
-                    break;
-                case 'installment':
-                    message = 'Installment plan:\n- First installment: ₹625.00 (Due: Nov 5)\n- Second installment: ₹625.00 (Due: Nov 20)';
-                    break;
-            }
-            alert(message);
-        }
-
-        function renewBook(bookTitle) {
-            if (bookTitle.includes('Modern Database')) {
-                alert('Cannot renew overdue book. Please pay fine first.');
-            } else {
-                alert(`Book "${bookTitle}" renewed successfully!\nNew due date: Oct 8, 2025`);
-            }
-        }
-
-        function payFine(bookTitle) {
-            alert(`Fine payment of ₹2.50 for "${bookTitle}" processed successfully!`);
-        }
-
-        function renewPass() {
-            alert('Transport pass renewal initiated.\nAmount: ₹450.00\nNew validity: Nov 1 - Nov 30, 2025');
-        }
-
+        
         function viewAssignment(assignmentName) {
-            // For demo purposes, show a placeholder
-            // In real implementation, you'd fetch the actual file URL from Firebase
-            const demoUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
-            window.open(demoUrl, '_blank');
+            alert(`Showing submission for: ${assignmentName}`);
         }
-
-        // ==========================================
-        // LIVE UPDATES
-        // ==========================================
+        
         function updateNotificationBadge() {
             const badge = document.querySelector('.notification-badge');
             if (badge) {
-                badge.textContent = '5';
+                const count = assignmentsData.filter(a => a.status === 'pending').length + feesData.filter(f => f.status === 'due').length;
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'flex' : 'none';
             }
         }
 
-        // ==========================================
-        // NOTIFICATION SYSTEM
-        // ==========================================
         document.getElementById('notificationBtn').addEventListener('click', () => {
-            alert('Notifications:\n\n• CS203 Project deadline approaching\n• Hostel fee payment due\n• Library book return reminder\n• New exam schedule published\n• Transport pass renewal available');
+            alert('Notifications panel would show detailed updates here.');
         });
     </script>
-    <script type="module" src="./student.js"></script>
 </body>
 
 </html>
